@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>TNG Savings Tracker</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <link rel="icon" type="image/png" href="Broski.png">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
@@ -99,7 +101,6 @@
     .card-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
     .card-amt { font-size: 15px; font-weight: 600; font-family: var(--font-mono),monospace; color: var(--accent); }
     
-    /* Transaction rows with swipe-to-delete UX */
     .txn-row { 
       display: flex; align-items: center; gap: 12px; 
       padding: 12px 0; border-bottom: 1px solid var(--border); 
@@ -123,7 +124,6 @@
     .filter-pill { background: var(--surface-1); border: 1px solid var(--border); padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; color: var(--text-muted); cursor: pointer; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; }
     .filter-pill.active { background: var(--accent); border-color: var(--accent); color: white; }
 
-    /* AI Insight card - real streaming */
     .insight-card { 
       background: linear-gradient(145deg, #0A1628 0%, #0D1F3C 100%); 
       border: 1px solid rgba(0,102,255,0.25); 
@@ -149,7 +149,6 @@
     .stat-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 500; letter-spacing: 0.3px; }
     .stat-val { font-size: 16px; font-weight: 600; font-family: var(--font-mono),monospace; }
 
-    /* Category breakdown chart */
     .cat-chart { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 16px; }
     .cat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
     .cat-row:last-child { margin-bottom: 0; }
@@ -158,14 +157,12 @@
     .cat-bar { height: 100%; border-radius: 4px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
     .cat-amt { font-size: 11px; font-family: var(--font-mono),monospace; color: var(--text-muted); width: 72px; text-align: right; flex-shrink: 0; }
 
-    /* Month group headers */
     .month-group { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; padding: 10px 0 6px; }
 
     .inp { width: 100%; padding: 12px 14px; border: 1px solid var(--border-strong); border-radius: 10px; font-size: 14px; background: var(--surface-2); color: var(--text-primary); margin-bottom: 10px; transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none; }
     .inp:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
     select.inp { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2387929D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; background-size: 16px; padding-right: 40px; }
     
-    /* PIN input wrapper with show/hide */
     .pin-wrap { position: relative; margin-bottom: 10px; }
     .pin-wrap .inp { margin-bottom: 0; padding-right: 44px; }
     .pin-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; }
@@ -195,7 +192,6 @@
     .empty-state i { font-size: 36px; display: block; margin-bottom: 10px; opacity: .4; color: var(--text-muted); }
     .empty-state strong { display: block; font-size: 14px; color: var(--text-secondary); margin-bottom: 4px; }
 
-    /* Withdrawal toggle in Add tab */
     .type-toggle { display: flex; background: var(--surface-2); border-radius: 10px; padding: 3px; margin-bottom: 12px; border: 1px solid var(--border); }
     .type-opt { flex: 1; padding: 9px; text-align: center; font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 8px; color: var(--text-muted); transition: all 0.2s; }
     .type-opt.active { background: var(--surface-1); color: var(--text-primary); box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
@@ -206,27 +202,26 @@
 
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
 
-    /* Confirm delete animation */
     @keyframes fadeOut { to { opacity: 0; transform: translateX(20px); } }
     .txn-row.deleting { animation: fadeOut 0.25s forwards; }
   </style>
 </head>
 <body>
 
+
 <div class="mobile-container">
   <h2 class="sr-only">TNG Savings Tracker</h2>
   <div class="toast-wrap"><div class="toast" id="toast"></div></div>
 
-  <!-- PAGE: LOGIN -->
   <div id="pg-login" class="page active">
     <div style="padding:48px 24px 24px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:36px">
-        <div class="logo-dot" style="width:36px;height:36px;font-size:15px">T</div>
-        <div>
-          <div style="font-size:18px;font-weight:700;letter-spacing:0.3px">TNG savings</div>
-          <div style="font-size:12px;color:var(--text-muted)">track · grow · share</div>
-        </div>
-      </div>
+      <div style="display:flex;align-items:center;gap:15px;margin-bottom:36px">
+  <img src="broski.png" alt="Broski Tabung Logo" style="width:60px; height:60px; border-radius:12px; object-fit:cover;">
+  <div>
+    <div style="font-size:20px;font-weight:700;letter-spacing:0.3px">Broski Tabung</div>
+    <div style="font-size:12px;color:var(--text-muted)">track · grow · share</div>
+  </div>
+</div>
       <div id="login-form">
         <div class="sec-title" style="margin-bottom:14px">sign in</div>
         <div id="user-list" style="margin-bottom:16px"></div>
@@ -246,7 +241,6 @@
     </div>
   </div>
 
-  <!-- PAGE: PIN VERIFICATION -->
   <div id="pg-pin" class="page">
     <div style="padding:48px 24px 24px;text-align:center">
       <div id="pin-avatar" class="avatar" style="width:64px;height:64px;font-size:22px;margin:0 auto 16px"></div>
@@ -261,7 +255,6 @@
     </div>
   </div>
 
-  <!-- PAGE: MAIN DASHBOARD -->
   <div id="pg-main" class="page">
     <div class="hdr">
       <div class="hdr-top">
@@ -287,9 +280,7 @@
       <button class="tab-btn" onclick="switchTab('stats',this)"><i class="ti ti-chart-bar" aria-hidden="true"></i>stats</button>
     </div>
 
-    <!-- TAB: MINE -->
     <div id="tab-mine" class="body">
-      <!-- AI Insight Block -->
       <div class="insight-card" id="ai-insight-block" style="display:none">
         <div class="insight-title"><i class="ti ti-sparkles" aria-hidden="true"></i> AI Insight</div>
         <div class="insight-desc" id="ai-insight-text">
@@ -321,18 +312,15 @@
       </div>
     </div>
 
-    <!-- TAB: JOINT -->
     <div id="tab-joint" class="body" style="display:none">
       <div class="sec-title">joint pots</div>
       <div id="joint-list"></div>
       <button class="btn-pri" onclick="openCreateJoint()"><i class="ti ti-plus" aria-hidden="true"></i> create joint pot</button>
     </div>
 
-    <!-- TAB: ADD -->
     <div id="tab-add" class="body" style="display:none">
       <div class="sec-title">record transaction</div>
 
-      <!-- Deposit / Withdrawal toggle -->
       <div class="type-toggle">
         <div class="type-opt dep-opt active" id="type-dep" onclick="setTxnType('deposit')"><i class="ti ti-arrow-down-left"></i> Deposit</div>
         <div class="type-opt wit-opt" id="type-wit" onclick="setTxnType('withdrawal')"><i class="ti ti-arrow-up-right"></i> Withdraw</div>
@@ -365,7 +353,6 @@
       <input type="file" id="img-file" accept="image/*" style="display:none" onchange="handleImg(event)">
     </div>
 
-    <!-- TAB: STATS -->
     <div id="tab-stats" class="body" style="display:none">
       <div class="sec-title">overview</div>
       <div class="stats-grid">
@@ -384,7 +371,6 @@
     </div>
   </div>
 
-  <!-- PAGE: JOINT DETAIL -->
   <div id="pg-joint-detail" class="page">
     <div class="hdr" style="padding-bottom:20px">
       <div class="hdr-top">
@@ -421,7 +407,6 @@
     </div>
   </div>
 
-  <!-- SYSTEM MODAL -->
   <div id="modal-layer" style="display:none">
     <div class="modal-bg" id="modal-bg" onclick="closeModal(event)">
       <div class="sheet" onclick="event.stopPropagation()">
@@ -576,7 +561,7 @@ function renderHeader(){
   const goal=u.goal||0;const pw=document.getElementById('hdr-prog');
   if(goal>0){
     pw.style.display='block';
-    const pct=Math.min(100,Math.round(net/goal*100));
+    const pct=Math.min(100,Math.round(total/goal*100)); // fixed net reference
     document.getElementById('prog-pct').textContent=pct+'%';
     document.getElementById('prog-goal-txt').textContent='goal: '+fmt(goal);
     document.getElementById('prog-fill').style.width=pct+'%';
@@ -600,18 +585,9 @@ function renderMine(){
   const el=document.getElementById('mine-txns');
   if(!txns.length){el.innerHTML='<div class="empty-state"><i class="ti ti-inbox"></i><strong>Nothing here</strong>Add your first transaction above.</div>';return}
 
-  // Group by month
-  const groups={};
-  txns.forEach(t=>{
-    const key=t.monthKey||t.date;
-    if(!groups[key])groups[key]=[];
-    groups[key].push(t)
-  });
-
   // Re-group properly by month label
   const byMonth={};
   txns.forEach(t=>{
-    // Try to parse month from date string like "28 Jun 2026"
     const parts=t.date?t.date.split(' '):[];
     const label=(parts.length>=3)?parts[1]+' '+parts[2]:t.date;
     if(!byMonth[label])byMonth[label]=[];
@@ -664,7 +640,6 @@ async function generateAiInsights(){
   const catBreakdown={};
   deposits.forEach(t=>{const c=t.category||'General';catBreakdown[c]=(catBreakdown[c]||0)+t.amount});
 
-  // Cache key based on snapshot
   const cacheKey=JSON.stringify({total,goal,count:txns.length,cats:catBreakdown});
   if(aiInsightCache.key===cacheKey&&aiInsightCache.text){
     block.style.display='block';
@@ -712,7 +687,6 @@ function setTxnType(type){
     btn.innerHTML='<i class="ti ti-arrow-up-right"></i> record withdrawal';
     btn.style.background='rgba(220,53,69,0.8)';
     btn.style.boxShadow='0 4px 12px rgba(220,53,69,0.25)';
-    // Hide category and target for withdrawals, keep amount visible
     catSel.style.display='none';
     document.getElementById('add-target-wrap').style.display='none';
   }else{
@@ -889,7 +863,7 @@ function renderJointDetail(){
   const goal=j.goal||0;const pw=document.getElementById('jd-prog');
   if(goal>0){
     pw.style.display='block';
-    const pct=Math.min(100,Math.round(total/goal*100));
+    const pct=Math.min(100,Math.round(net/goal*100));
     document.getElementById('jd-prog-pct').textContent=pct+'%';
     document.getElementById('jd-prog-goal-txt').textContent='goal: '+fmt(goal);
     document.getElementById('jd-prog-fill').style.width=pct+'%';
@@ -953,7 +927,7 @@ async function doJointDeposit(){
   if(!amt||amt<=0){toast('Enter a valid amount');return}
   const now=new Date();const date=now.toLocaleDateString('en-MY',{day:'numeric',month:'short',year:'numeric'});
   if(!S.joints[curJoint].txns)S.joints[curJoint].txns=[];
-  S.joints[curJoint].txns.push({id:'t'+Date.now(),amount:amt,desc,date,byId:S.cur,by:curUser().name});
+  S.joints[curJoint].txns.push({id:'t'+Date.now(),amount:amt,desc,date,type:'deposit',byId:S.cur,by:curUser().name});
   await saveJoints();closeModal();renderJointDetail();renderHeader();toast('Added '+fmt(amt))
 }
 
@@ -1012,29 +986,47 @@ async function clearMyData(){
   renderHeader();renderMine();renderStats();toast('Data cleared')
 }
 
-// ── QR / RECEIPT ──────────────────────────────────────────────────────────
+// ── QR / RECEIPT WITH OCR FALLBACK ─────────────────────────────────────────
 function handleImg(e){
   const file=e.target.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=ev=>{
     const img=new Image();
-    img.onload=()=>{
+    img.onload=async ()=>{
       const c=document.createElement('canvas');c.width=img.width;c.height=img.height;
       const ctx=c.getContext('2d');ctx.drawImage(img,0,0);
       const data=ctx.getImageData(0,0,c.width,c.height);
       const code=typeof jsQR!=='undefined'?jsQR(data.data,data.width,data.height):null;
-      if(code){applyQR(code.data)}else{toast('No QR found. Enter manually.')}
+      if(code){
+        applyQR(code.data)
+      }else{
+        await scanAmountFromImage(file);
+      }
     };img.src=ev.target.result;
   };reader.readAsDataURL(file);e.target.value=''
 }
+
+async function scanAmountFromImage(file){
+  if(typeof Tesseract==='undefined') return toast('OCR not loaded');
+  toast('Scanning receipt...');
+  try {
+    const res=await Tesseract.recognize(file,'eng');
+    applyQR(res.data.text);
+  } catch(err) {
+    toast('OCR failed. Enter manually.');
+  }
+}
+
 function applyQR(text){
-  const amtM=text.match(/(?:amount|amt|RM|MYR)[:\s]*([0-9]+(?:\.[0-9]{1,2})?)/i);
-  const numM=text.match(/\b([0-9]{1,4}\.[0-9]{2})\b/);
-  const amt=amtM?parseFloat(amtM[1]):numM?parseFloat(numM[1]):null;
-  if(!amt||amt<=0){toast('Could not read amount');return}
-  document.getElementById('add-amt').value=amt.toFixed(2);
-  document.getElementById('add-desc').value='TNG receipt';
-  toast('Read RM '+amt.toFixed(2)+' — confirm to add')
+  const amt = text.match(/(RM|MYR)\s*([0-9,]+(\.[0-9]{1,2})?)/i);
+  const value = amt ? parseFloat(amt[2].replace(/,/g, '')) : null;
+
+  if(!value) return toast('Cannot read amount from image.');
+
+  document.getElementById('add-amt').value = value.toFixed(2);
+  document.getElementById('add-desc').value = 'TNG receipt';
+
+  toast('Detected RM ' + value.toFixed(2));
 }
 
 // ── CSV EXPORT ────────────────────────────────────────────────────────────
