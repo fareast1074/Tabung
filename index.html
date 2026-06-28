@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>TNG Savings Tracker - Ultimate Edition</title>
+  <title>TNG Savings Tracker</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -99,32 +99,77 @@
     .card-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
     .card-amt { font-size: 15px; font-weight: 600; font-family: var(--font-mono),monospace; color: var(--accent); }
     
-    .txn-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    /* Transaction rows with swipe-to-delete UX */
+    .txn-row { 
+      display: flex; align-items: center; gap: 12px; 
+      padding: 12px 0; border-bottom: 1px solid var(--border); 
+      position: relative;
+    }
     .txn-row:last-child { border-bottom: none; }
     .txn-ic { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
     .txn-ic.dep { background: rgba(0, 194, 168, 0.1); color: var(--success); border: 1px solid rgba(0, 194, 168, 0.15); }
+    .txn-ic.wit { background: rgba(255, 107, 107, 0.1); color: var(--text-danger); border: 1px solid rgba(255,107,107,0.15); }
     .txn-info { flex: 1; min-width: 0; }
     .txn-desc { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary); }
     .txn-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-    .txn-amt { font-size: 14px; font-weight: 600; color: var(--success); font-family: var(--font-mono),monospace; white-space: nowrap; }
+    .txn-amt { font-size: 14px; font-weight: 600; font-family: var(--font-mono),monospace; white-space: nowrap; }
+    .txn-amt.pos { color: var(--success); }
+    .txn-amt.neg { color: var(--text-danger); }
+    .txn-del { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px 6px; border-radius: 6px; opacity: 0.5; transition: opacity 0.2s, color 0.2s; flex-shrink: 0; }
+    .txn-del:hover { opacity: 1; color: var(--text-danger); }
 
-    .filter-bar { display: flex; gap: 8px; margin-bottom: 12px; }
-    .filter-pill { background: var(--surface-1); border: 1px solid var(--border); padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; color: var(--text-muted); cursor: pointer; text-transform: uppercase; }
+    .filter-bar { display: flex; gap: 8px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px; }
+    .filter-bar::-webkit-scrollbar { display: none; }
+    .filter-pill { background: var(--surface-1); border: 1px solid var(--border); padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; color: var(--text-muted); cursor: pointer; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; }
     .filter-pill.active { background: var(--accent); border-color: var(--accent); color: white; }
 
-    .insight-card { background: linear-gradient(145deg, #141E30 0%, #243B55 100%); border: 1px solid var(--border-strong); border-radius: 12px; padding: 14px; margin-bottom: 16px; }
-    .insight-title { font-size: 12px; font-weight: 700; color: #00F2FE; display: flex; align-items: center; gap: 6px; text-transform: uppercase; margin-bottom: 6px; }
-    .insight-desc { font-size: 13px; color: var(--text-primary); line-height: 1.4; }
+    /* AI Insight card - real streaming */
+    .insight-card { 
+      background: linear-gradient(145deg, #0A1628 0%, #0D1F3C 100%); 
+      border: 1px solid rgba(0,102,255,0.25); 
+      border-radius: 12px; padding: 14px; margin-bottom: 16px;
+      position: relative; overflow: hidden;
+    }
+    .insight-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,102,255,0.5), transparent);
+    }
+    .insight-title { font-size: 11px; font-weight: 700; color: #4D9FFF; display: flex; align-items: center; gap: 6px; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .insight-desc { font-size: 13px; color: var(--text-primary); line-height: 1.55; }
+    .insight-desc b { color: #7BC3FF; }
+    .insight-loader { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 12px; }
+    .insight-dots span { animation: blink 1.2s infinite; }
+    .insight-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .insight-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink { 0%,80%,100%{opacity:.2} 40%{opacity:1} }
 
     .stats-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
     .stat-card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
     .stat-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 500; letter-spacing: 0.3px; }
     .stat-val { font-size: 16px; font-weight: 600; font-family: var(--font-mono),monospace; }
 
+    /* Category breakdown chart */
+    .cat-chart { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 16px; }
+    .cat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .cat-row:last-child { margin-bottom: 0; }
+    .cat-label { font-size: 12px; font-weight: 600; width: 70px; flex-shrink: 0; color: var(--text-secondary); }
+    .cat-bar-wrap { flex: 1; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
+    .cat-bar { height: 100%; border-radius: 4px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+    .cat-amt { font-size: 11px; font-family: var(--font-mono),monospace; color: var(--text-muted); width: 72px; text-align: right; flex-shrink: 0; }
+
+    /* Month group headers */
+    .month-group { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; padding: 10px 0 6px; }
+
     .inp { width: 100%; padding: 12px 14px; border: 1px solid var(--border-strong); border-radius: 10px; font-size: 14px; background: var(--surface-2); color: var(--text-primary); margin-bottom: 10px; transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none; }
     .inp:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
     select.inp { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2387929D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; background-size: 16px; padding-right: 40px; }
     
+    /* PIN input wrapper with show/hide */
+    .pin-wrap { position: relative; margin-bottom: 10px; }
+    .pin-wrap .inp { margin-bottom: 0; padding-right: 44px; }
+    .pin-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; }
+
     .btn-pri { background: var(--accent); color: #fff; border: none; border-radius: 10px; padding: 14px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(0, 102, 255, 0.25); }
     .btn-pri:active { transform: scale(0.98); opacity: 0.95; }
     .btn-sec { background: transparent; border: 1px solid var(--border-strong); border-radius: 10px; padding: 13px; font-size: 14px; font-weight: 500; cursor: pointer; color: var(--text-primary); width: 100%; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -148,14 +193,28 @@
 
     .empty-state { text-align: center; padding: 44px 16px; color: var(--text-muted); font-size: 13px; }
     .empty-state i { font-size: 36px; display: block; margin-bottom: 10px; opacity: .4; color: var(--text-muted); }
+    .empty-state strong { display: block; font-size: 14px; color: var(--text-secondary); margin-bottom: 4px; }
+
+    /* Withdrawal toggle in Add tab */
+    .type-toggle { display: flex; background: var(--surface-2); border-radius: 10px; padding: 3px; margin-bottom: 12px; border: 1px solid var(--border); }
+    .type-opt { flex: 1; padding: 9px; text-align: center; font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 8px; color: var(--text-muted); transition: all 0.2s; }
+    .type-opt.active { background: var(--surface-1); color: var(--text-primary); box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+    .type-opt.dep-opt.active { color: var(--success); }
+    .type-opt.wit-opt.active { color: var(--text-danger); }
+
+    .avatar { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 600; flex-shrink: 0; }
 
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
+
+    /* Confirm delete animation */
+    @keyframes fadeOut { to { opacity: 0; transform: translateX(20px); } }
+    .txn-row.deleting { animation: fadeOut 0.25s forwards; }
   </style>
 </head>
 <body>
 
 <div class="mobile-container">
-  <h2 class="sr-only">TNG Premium Savings Hub</h2>
+  <h2 class="sr-only">TNG Savings Tracker</h2>
   <div class="toast-wrap"><div class="toast" id="toast"></div></div>
 
   <!-- PAGE: LOGIN -->
@@ -165,7 +224,7 @@
         <div class="logo-dot" style="width:36px;height:36px;font-size:15px">T</div>
         <div>
           <div style="font-size:18px;font-weight:700;letter-spacing:0.3px">TNG savings</div>
-          <div style="font-size:12px;color:var(--text-muted)">ultimate pocket analyzer</div>
+          <div style="font-size:12px;color:var(--text-muted)">track · grow · share</div>
         </div>
       </div>
       <div id="login-form">
@@ -177,7 +236,10 @@
       <div id="reg-form" style="display:none">
         <div class="sec-title" style="margin-bottom:14px">create account</div>
         <input class="inp" id="reg-name" placeholder="Your name (e.g. Ahmad)" maxlength="20">
-        <input class="inp" id="reg-pin" type="password" placeholder="4-digit PIN" maxlength="4" inputmode="numeric">
+        <div class="pin-wrap">
+          <input class="inp" id="reg-pin" type="password" placeholder="4-digit PIN" maxlength="4" inputmode="numeric">
+          <button class="pin-toggle" type="button" onclick="togglePinVis('reg-pin',this)" tabindex="-1"><i class="ti ti-eye"></i></button>
+        </div>
         <button class="btn-pri" onclick="register()">create account</button>
         <button class="btn-sec" onclick="showLogin()">back</button>
       </div>
@@ -189,8 +251,11 @@
     <div style="padding:48px 24px 24px;text-align:center">
       <div id="pin-avatar" class="avatar" style="width:64px;height:64px;font-size:22px;margin:0 auto 16px"></div>
       <div style="font-size:18px;font-weight:600;margin-bottom:6px" id="pin-name"></div>
-      <div style="font-size:13px;color:var(--text-muted);margin-bottom:28px">enter your secure PIN</div>
-      <input class="inp" id="pin-input" type="password" placeholder="••••" maxlength="4" inputmode="numeric" style="text-align:center;font-size:24px;letter-spacing:8px;margin-bottom:16px;max-width:200px;margin-left:auto;margin-right:auto;">
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:28px">enter your PIN</div>
+      <div class="pin-wrap" style="max-width:200px;margin:0 auto 16px">
+        <input class="inp" id="pin-input" type="password" placeholder="••••" maxlength="4" inputmode="numeric" style="text-align:center;font-size:24px;letter-spacing:8px;margin-bottom:0">
+        <button class="pin-toggle" type="button" onclick="togglePinVis('pin-input',this)" tabindex="-1"><i class="ti ti-eye"></i></button>
+      </div>
       <button class="btn-pri" onclick="verifyPin()">sign in</button>
       <button class="btn-sec" onclick="showLogin()">back</button>
     </div>
@@ -225,25 +290,28 @@
     <!-- TAB: MINE -->
     <div id="tab-mine" class="body">
       <!-- AI Insight Block -->
-      <div class="insight-card" id="ai-insight-block" style="display: none;">
-        <div class="insight-title"><i class="ti ti-bulb" aria-hidden="true"></i> Smart Assistant Insight</div>
-        <div class="insight-desc" id="ai-insight-text">Loading premium smart suggestions...</div>
+      <div class="insight-card" id="ai-insight-block" style="display:none">
+        <div class="insight-title"><i class="ti ti-sparkles" aria-hidden="true"></i> AI Insight</div>
+        <div class="insight-desc" id="ai-insight-text">
+          <div class="insight-loader"><span>Thinking</span><div class="insight-dots"><span>.</span><span>.</span><span>.</span></div></div>
+        </div>
       </div>
 
       <div class="sec-title">
-        <span>recent transactions</span>
-        <span onclick="exportToCSV()" style="color:var(--accent);cursor:pointer;font-size:11px;text-transform:none;"><i class="ti ti-download" aria-hidden="true"></i> Export CSV</span>
+        <span>transactions</span>
+        <span onclick="exportToCSV()" style="color:var(--accent);cursor:pointer;font-size:11px;text-transform:none;"><i class="ti ti-download" aria-hidden="true"></i> CSV</span>
       </div>
       
-      <!-- Filter Bar Matrix -->
       <div class="filter-bar">
         <div class="filter-pill active" onclick="filterTxns('all', this)">All</div>
         <div class="filter-pill" onclick="filterTxns('General', this)">General</div>
         <div class="filter-pill" onclick="filterTxns('Bonus', this)">Bonus</div>
         <div class="filter-pill" onclick="filterTxns('Cashback', this)">Cashback</div>
+        <div class="filter-pill" onclick="filterTxns('Salary', this)">Salary</div>
+        <div class="filter-pill" onclick="filterTxns('Withdrawal', this)">Withdrawals</div>
       </div>
 
-      <input class="inp" id="search-txns" placeholder="🔍 Search descriptions..." oninput="renderMine()" style="margin-bottom:12px; padding: 8px 12px; font-size:13px;">
+      <input class="inp" id="search-txns" placeholder="🔍 Search..." oninput="renderMine()" style="margin-bottom:12px;padding:8px 12px;font-size:13px;">
 
       <div id="mine-txns"></div>
       <div style="margin-top:14px">
@@ -262,14 +330,21 @@
 
     <!-- TAB: ADD -->
     <div id="tab-add" class="body" style="display:none">
-      <div class="sec-title">add to savings</div>
-      <div style="margin-bottom:8px">
+      <div class="sec-title">record transaction</div>
+
+      <!-- Deposit / Withdrawal toggle -->
+      <div class="type-toggle">
+        <div class="type-opt dep-opt active" id="type-dep" onclick="setTxnType('deposit')"><i class="ti ti-arrow-down-left"></i> Deposit</div>
+        <div class="type-opt wit-opt" id="type-wit" onclick="setTxnType('withdrawal')"><i class="ti ti-arrow-up-right"></i> Withdraw</div>
+      </div>
+
+      <div id="add-target-wrap" style="margin-bottom:8px">
         <select class="inp" id="add-target" style="margin-bottom:10px">
           <option value="me">my personal savings</option>
         </select>
       </div>
-      <div style="display:flex; gap:10px;">
-        <input class="inp" type="number" id="add-amt" placeholder="Amount (RM)" step="0.01" min="0.01" style="flex:2;">
+      <div style="display:flex;gap:10px;">
+        <input class="inp" type="number" id="add-amt" placeholder="Amount (RM)" step="0.01" min="0.01" style="flex:2;margin-bottom:0;">
         <select class="inp" id="add-cat" style="flex:1.5;">
           <option value="General">General</option>
           <option value="Bonus">Bonus</option>
@@ -277,8 +352,9 @@
           <option value="Salary">Salary</option>
         </select>
       </div>
+      <div style="margin-bottom:10px"></div>
       <input class="inp" id="add-desc" placeholder="Note (optional)">
-      <button class="btn-pri" onclick="addDeposit()"><i class="ti ti-plus" aria-hidden="true"></i> add deposit</button>
+      <button class="btn-pri" id="add-btn" onclick="addDeposit()"><i class="ti ti-plus" aria-hidden="true"></i> add deposit</button>
       <div style="border-top:1px solid var(--border);margin:20px 0"></div>
       <div class="sec-title">scan tng receipt</div>
       <div style="border:1.5px dashed var(--border-strong);border-radius:12px;padding:20px;text-align:center;cursor:pointer;background:var(--surface-1);" onclick="document.getElementById('img-file').click()">
@@ -293,11 +369,15 @@
     <div id="tab-stats" class="body" style="display:none">
       <div class="sec-title">overview</div>
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-label">personal total</div><div class="stat-val" id="st-total" style="color:var(--accent)">RM 0.00</div></div>
+        <div class="stat-card"><div class="stat-label">net savings</div><div class="stat-val" id="st-total" style="color:var(--accent)">RM 0.00</div></div>
         <div class="stat-card"><div class="stat-label">transactions</div><div class="stat-val" id="st-count" style="color:var(--text-secondary)">0</div></div>
         <div class="stat-card"><div class="stat-label">largest deposit</div><div class="stat-val" id="st-max" style="color:var(--success)">RM 0.00</div></div>
-        <div class="stat-card"><div class="stat-label">average deposit</div><div class="stat-val" id="st-avg" style="color:#FFAA00">RM 0.00</div></div>
+        <div class="stat-card"><div class="stat-label">avg deposit</div><div class="stat-val" id="st-avg" style="color:#FFAA00">RM 0.00</div></div>
       </div>
+
+      <div class="sec-title">by category</div>
+      <div class="cat-chart" id="cat-chart"><div style="font-size:12px;color:var(--text-muted)">No data yet.</div></div>
+
       <div class="sec-title" style="margin-top:6px">joint pot totals</div>
       <div id="st-joint"></div>
       <button class="btn-danger" onclick="clearMyData()"><i class="ti ti-trash" aria-hidden="true"></i> clear my data</button>
@@ -319,9 +399,7 @@
         <div class="bal-label" id="jd-name-label">joint pot</div>
         <div class="bal-amt"><small>RM</small><span id="jd-total">0.00</span></div>
         <div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:6px;font-weight:500;" id="jd-members-label"></div>
-        
-        <!-- Shared Goal Progress Bar -->
-        <div class="prog-wrap" id="jd-prog" style="display:none; margin-top:16px;">
+        <div class="prog-wrap" id="jd-prog" style="display:none;margin-top:16px;">
           <div class="prog-meta"><span id="jd-prog-pct"></span><span id="jd-prog-goal-txt"></span></div>
           <div class="prog-bar"><div class="prog-fill" id="jd-prog-fill" style="width:0%"></div></div>
         </div>
@@ -333,7 +411,10 @@
       <div class="sec-title" style="margin-top:16px">transactions</div>
       <div id="jd-txns"></div>
       <div style="margin-top:18px">
-        <button class="btn-pri" onclick="openJointDeposit()"><i class="ti ti-plus" aria-hidden="true"></i> add to this pot</button>
+        <div style="display:flex;gap:10px;margin-bottom:10px">
+          <button class="btn-pri" style="flex:1;margin-bottom:0" onclick="openJointDeposit()"><i class="ti ti-arrow-down-left" aria-hidden="true"></i> deposit</button>
+          <button class="btn-sec" style="flex:1;margin-bottom:0;color:var(--text-danger);border-color:var(--border-danger)" onclick="openJointWithdraw()"><i class="ti ti-arrow-up-right" aria-hidden="true"></i> withdraw</button>
+        </div>
         <button class="btn-sec" onclick="openJointGoalModal()"><i class="ti ti-target" aria-hidden="true"></i> <span id="jd-goal-btn-txt">set joint goal</span></button>
         <button class="btn-danger" onclick="leaveJoint()" style="margin-top:0"><i class="ti ti-door-exit" aria-hidden="true"></i> leave this pot</button>
       </div>
@@ -351,7 +432,6 @@
   </div>
 </div>
 
-<!-- Dependency Scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
@@ -371,38 +451,30 @@ const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 const COLORS=['#0066FF','#00C2A8','#FF7043','#9C27B0','#FF9800','#E91E63'];
-function initials(name){return name ? name.slice(0,2).toUpperCase() : '??'}
+const CAT_COLORS = { General:'#0066FF', Bonus:'#00C2A8', Cashback:'#FFAA00', Salary:'#9C27B0', Withdrawal:'#FF6B6B' };
+
+function initials(name){return name?name.slice(0,2).toUpperCase():'??'}
 function colorIdx(name){let h=0;for(let c of name)h=(h*31+c.charCodeAt(0))%COLORS.length;return h}
-function avatarStyle(name,size=32){const i=colorIdx(name||'??');return `width:${size}px;height:${size}px;border-radius:50%;background:${COLORS[i]};color:#fff;display:flex;align-items:center;justify-content:center;font-size:${Math.floor(size*.38)}px;font-weight:600;flex-shrink:0`}
-function fmt(n){return 'RM '+parseFloat(n).toFixed(2)}
+function avatarStyle(name,size=32){const i=colorIdx(name||'??');return`width:${size}px;height:${size}px;border-radius:50%;background:${COLORS[i]};color:#fff;display:flex;align-items:center;justify-content:center;font-size:${Math.floor(size*.38)}px;font-weight:600;flex-shrink:0`}
+function fmt(n){return'RM '+parseFloat(n||0).toFixed(2)}
 
 let S={users:{},joints:{},cur:null};
-let activeTab = 'mine';
-let currentCategoryFilter = 'all';
+let activeTab='mine';
+let currentCategoryFilter='all';
+let currentTxnType='deposit';
+let aiInsightCache={key:'',text:''};
 
-function startDatabaseListeners() {
-  db.ref('tng_users').on('value', (snapshot) => {
-    S.users = snapshot.val() || {};
-    renderUpdates();
-  });
-  db.ref('tng_joints').on('value', (snapshot) => {
-    S.joints = snapshot.val() || {};
-    renderUpdates();
-  });
+function startDatabaseListeners(){
+  db.ref('tng_users').on('value',snap=>{S.users=snap.val()||{};renderUpdates()});
+  db.ref('tng_joints').on('value',snap=>{S.joints=snap.val()||{};renderUpdates()});
 }
 
-function renderUpdates() {
-  if (!S.cur) {
-    renderUserList();
-  } else {
-    renderHeader();
-    renderAddTarget();
-    generateAiInsights();
-    if (document.getElementById('pg-main').classList.contains('active')) {
-      populateTab(activeTab);
-    } else if (document.getElementById('pg-joint-detail').classList.contains('active')) {
-      renderJointDetail();
-    }
+function renderUpdates(){
+  if(!S.cur){renderUserList()}
+  else{
+    renderHeader();renderAddTarget();
+    if(document.getElementById('pg-main').classList.contains('active')) populateTab(activeTab);
+    else if(document.getElementById('pg-joint-detail').classList.contains('active')) renderJointDetail();
   }
 }
 
@@ -411,31 +483,47 @@ async function saveJoints(){try{await db.ref('tng_joints').set(S.joints)}catch(e
 
 function curUser(){return S.users[S.cur]||{name:'',pin:'',txns:[],goal:0}}
 function myTxns(){return curUser().txns||[]}
-function myTotal(){return myTxns().reduce((a,t)=>a+t.amount,0)}
-function myJoints(){return Object.values(S.joints).filter(j=>(j.members || []).includes(S.cur))}
+function myTotal(){
+  return myTxns().reduce((a,t)=>a+(t.type==='withdrawal'?-t.amount:t.amount),0);
+}
+function myJoints(){return Object.values(S.joints).filter(j=>(j.members||[]).includes(S.cur))}
 
 function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active')}
 function showLogin(){document.getElementById('login-form').style.display='block';document.getElementById('reg-form').style.display='none';renderUserList();showPage('pg-login')}
 function showReg(){document.getElementById('login-form').style.display='none';document.getElementById('reg-form').style.display='block';showPage('pg-login')}
 
+function togglePinVis(id, btn){
+  const inp=document.getElementById(id);
+  const isHidden=inp.type==='password';
+  inp.type=isHidden?'text':'password';
+  btn.querySelector('i').className=isHidden?'ti ti-eye-off':'ti ti-eye';
+}
+
 function renderUserList(){
   const el=document.getElementById('user-list');
   const users=Object.values(S.users);
-  if(!users.length){el.innerHTML='<div class="empty-state"><i class="ti ti-users" aria-hidden="true"></i>No accounts yet. Create one to get started.</div>';return}
+  if(!users.length){el.innerHTML='<div class="empty-state"><i class="ti ti-users"></i><strong>No accounts yet</strong>Create one to get started.</div>';return}
   el.innerHTML=users.map(u=>{
-    const txns = u.txns || [];
-    return `
-    <div class="card" style="cursor:pointer;margin-bottom:8px" onclick="startLogin('${u.id}')">
+    const txns=u.txns||[];
+    const net=txns.reduce((a,t)=>a+(t.type==='withdrawal'?-t.amount:t.amount),0);
+    return`<div class="card" style="cursor:pointer;margin-bottom:8px" onclick="startLogin('${u.id}')">
       <div class="card-row">
         <div class="avatar" style="${avatarStyle(u.name)}">${initials(u.name)}</div>
-        <div class="card-info"><div class="card-title">${u.name}</div><div class="card-sub">${fmt(txns.reduce((a,t)=>a+t.amount,0))} saved</div></div>
-        <i class="ti ti-chevron-right" aria-hidden="true" style="color:var(--text-muted)"></i>
+        <div class="card-info"><div class="card-title">${u.name}</div><div class="card-sub">${fmt(net)} saved</div></div>
+        <i class="ti ti-chevron-right" style="color:var(--text-muted)"></i>
       </div>
     </div>`}).join('')
 }
 
 let loginTarget=null;
-function startLogin(uid){loginTarget=uid;const u=S.users[uid];document.getElementById('pin-name').textContent=u.name;document.getElementById('pin-input').value='';const av=document.getElementById('pin-avatar');av.textContent=initials(u.name);av.style=avatarStyle(u.name,56);showPage('pg-pin')}
+function startLogin(uid){
+  loginTarget=uid;const u=S.users[uid];
+  document.getElementById('pin-name').textContent=u.name;
+  document.getElementById('pin-input').value='';
+  document.getElementById('pin-input').type='password';
+  const av=document.getElementById('pin-avatar');av.textContent=initials(u.name);av.style=avatarStyle(u.name,56);
+  showPage('pg-pin')
+}
 function verifyPin(){
   const pin=document.getElementById('pin-input').value;
   if(!loginTarget||!S.users[loginTarget]){toast('User not found');return}
@@ -451,14 +539,13 @@ async function register(){
   if(Object.values(S.users).some(u=>u.name.toLowerCase()===name.toLowerCase())){toast('Name already taken');return}
   const id='u'+Date.now();
   S.users[id]={id,name,pin,txns:[],goal:0};
-  await saveUsers();
-  S.cur=id;showMain('mine')
+  await saveUsers();S.cur=id;showMain('mine')
 }
 
-function logout(){if(confirm('Sign out?')){S.cur=null;showLogin()}}
+function logout(){if(confirm('Sign out?')){S.cur=null;aiInsightCache={key:'',text:''};showLogin()}}
 
 function showMain(tab){
-  activeTab = tab;
+  activeTab=tab;
   renderHeader();renderAddTarget();populateTab(tab);showPage('pg-main');
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
   document.querySelector(`.tab-btn[onclick*="'${tab}'"]`)?.classList.add('on');
@@ -467,7 +554,7 @@ function showMain(tab){
 }
 
 function switchTab(name,btn){
-  activeTab = name;
+  activeTab=name;
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
   document.querySelectorAll('[id^="tab-"]').forEach(t=>t.style.display='none');
@@ -476,23 +563,20 @@ function switchTab(name,btn){
 }
 
 function populateTab(name){
-  if(name==='mine') { renderMine(); generateAiInsights(); }
+  if(name==='mine'){renderMine();generateAiInsights()}
   else if(name==='joint')renderJoint();
   else if(name==='stats')renderStats()
 }
 
 function renderHeader(){
-  const u=curUser();
-  const total=myTotal();
+  const u=curUser();const total=myTotal();
   document.getElementById('hdr-name').textContent=u.name;
   document.getElementById('hdr-bal').textContent=total.toFixed(2);
-  const av=document.getElementById('hdr-avatar');
-  av.textContent=initials(u.name);av.style=avatarStyle(u.name,22);
-  const goal=u.goal||0;
-  const pw=document.getElementById('hdr-prog');
+  const av=document.getElementById('hdr-avatar');av.textContent=initials(u.name);av.style=avatarStyle(u.name,22);
+  const goal=u.goal||0;const pw=document.getElementById('hdr-prog');
   if(goal>0){
     pw.style.display='block';
-    const pct=Math.min(100,Math.round(total/goal*100));
+    const pct=Math.min(100,Math.round(net/goal*100));
     document.getElementById('prog-pct').textContent=pct+'%';
     document.getElementById('prog-goal-txt').textContent='goal: '+fmt(goal);
     document.getElementById('prog-fill').style.width=pct+'%';
@@ -500,132 +584,195 @@ function renderHeader(){
   }else{pw.style.display='none';document.getElementById('goal-btn-txt').textContent='set savings goal'}
 }
 
-function filterTxns(category, btnElement) {
-  currentCategoryFilter = category;
-  document.querySelectorAll('.filter-pill').forEach(pill => pill.classList.remove('active'));
-  btnElement.classList.add('active');
-  renderMine();
+function filterTxns(category,btn){
+  currentCategoryFilter=category;
+  document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');renderMine()
 }
 
 function renderMine(){
   let txns=[...myTxns()];
-  const searchQuery = document.getElementById('search-txns').value.toLowerCase().trim();
-  
-  if (currentCategoryFilter !== 'all') {
-    txns = txns.filter(t => (t.category || 'General') === currentCategoryFilter);
-  }
-  if (searchQuery) {
-    txns = txns.filter(t => t.desc.toLowerCase().includes(searchQuery));
-  }
-
-  txns = txns.reverse().slice(0, 20);
+  const q=document.getElementById('search-txns').value.toLowerCase().trim();
+  if(currentCategoryFilter==='Withdrawal') txns=txns.filter(t=>t.type==='withdrawal');
+  else if(currentCategoryFilter!=='all') txns=txns.filter(t=>(t.category||'General')===currentCategoryFilter&&t.type!=='withdrawal');
+  if(q) txns=txns.filter(t=>t.desc.toLowerCase().includes(q));
+  txns=[...txns].reverse().slice(0,40);
   const el=document.getElementById('mine-txns');
-  if(!txns.length){el.innerHTML='<div class="empty-state"><i class="ti ti-inbox" aria-hidden="true"></i>No matching deposits found.</div>';return}
-  
-  el.innerHTML=txns.map(t=>`
-    <div class="txn-row">
-      <div class="txn-ic dep"><i class="ti ti-arrow-down-left" aria-hidden="true"></i></div>
-      <div class="txn-info">
-        <div class="txn-desc">${t.desc}</div>
-        <div class="txn-meta">${t.date} · <span style="color:var(--accent); font-weight:600;">${t.category || 'General'}</span>${t.from?' · from '+t.from:''}</div>
-      </div>
-      <div class="txn-amt">+${fmt(t.amount)}</div>
-    </div>`).join('')
+  if(!txns.length){el.innerHTML='<div class="empty-state"><i class="ti ti-inbox"></i><strong>Nothing here</strong>Add your first transaction above.</div>';return}
+
+  // Group by month
+  const groups={};
+  txns.forEach(t=>{
+    const key=t.monthKey||t.date;
+    if(!groups[key])groups[key]=[];
+    groups[key].push(t)
+  });
+
+  // Re-group properly by month label
+  const byMonth={};
+  txns.forEach(t=>{
+    // Try to parse month from date string like "28 Jun 2026"
+    const parts=t.date?t.date.split(' '):[];
+    const label=(parts.length>=3)?parts[1]+' '+parts[2]:t.date;
+    if(!byMonth[label])byMonth[label]=[];
+    byMonth[label].push(t)
+  });
+
+  let html='';
+  Object.entries(byMonth).forEach(([month,mTxns])=>{
+    html+=`<div class="month-group">${month}</div>`;
+    mTxns.forEach(t=>{
+      const isWit=t.type==='withdrawal';
+      html+=`<div class="txn-row" id="txrow-${t.id}">
+        <div class="txn-ic ${isWit?'wit':'dep'}"><i class="ti ${isWit?'ti-arrow-up-right':'ti-arrow-down-left'}"></i></div>
+        <div class="txn-info">
+          <div class="txn-desc">${escHtml(t.desc)}</div>
+          <div class="txn-meta">${t.date} · <span style="color:${isWit?'var(--text-danger)':'var(--accent)'};font-weight:600">${isWit?'Withdrawal':t.category||'General'}</span></div>
+        </div>
+        <div class="txn-amt ${isWit?'neg':'pos'}">${isWit?'-':'+'}<span>${fmt(t.amount)}</span></div>
+        <button class="txn-del" onclick="deleteTxn('${t.id}')" title="Delete"><i class="ti ti-x"></i></button>
+      </div>`
+    })
+  });
+  el.innerHTML=html
 }
 
-function generateAiInsights() {
-  const txns = myTxns();
-  const goal = curUser().goal || 0;
-  const total = myTotal();
-  const insightBlock = document.getElementById('ai-insight-block');
-  const insightText = document.getElementById('ai-insight-text');
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
-  if (txns.length === 0) {
-    insightBlock.style.display = 'none';
+async function deleteTxn(tid){
+  const row=document.getElementById('txrow-'+tid);
+  if(row){row.classList.add('deleting')}
+  await new Promise(r=>setTimeout(r,220));
+  S.users[S.cur].txns=(S.users[S.cur].txns||[]).filter(t=>t.id!==tid);
+  await saveUsers();
+  renderHeader();renderMine();renderStats();
+  aiInsightCache={key:'',text:''};generateAiInsights();
+  toast('Transaction removed')
+}
+
+// ── AI INSIGHTS (real Claude API streaming) ────────────────────────────────
+async function generateAiInsights(){
+  const txns=myTxns();
+  const block=document.getElementById('ai-insight-block');
+  const textEl=document.getElementById('ai-insight-text');
+  if(!txns.length){block.style.display='none';return}
+
+  const total=myTotal();
+  const goal=curUser().goal||0;
+  const deposits=txns.filter(t=>t.type!=='withdrawal');
+  const withdrawals=txns.filter(t=>t.type==='withdrawal');
+  const catBreakdown={};
+  deposits.forEach(t=>{const c=t.category||'General';catBreakdown[c]=(catBreakdown[c]||0)+t.amount});
+
+  // Cache key based on snapshot
+  const cacheKey=JSON.stringify({total,goal,count:txns.length,cats:catBreakdown});
+  if(aiInsightCache.key===cacheKey&&aiInsightCache.text){
+    block.style.display='block';
+    textEl.innerHTML=aiInsightCache.text;
     return;
   }
 
-  insightBlock.style.display = 'block';
-  if (goal > 0) {
-    if (total >= goal) {
-      insightText.innerHTML = "🎉 **Incredible effort!** You've successfully hit your personal savings goal milestone. Set a higher limit to build momentum!";
-    } else {
-      const remaining = goal - total;
-      const averageDeposit = total / txns.length;
-      const projectedDepositsNeeded = Math.ceil(remaining / (averageDeposit || 1));
-      insightText.innerHTML = `Track pace locked in! At your historical deposit average of <b>${fmt(averageDeposit)}</b>, you are approximately <b>${projectedDepositsNeeded} deposits away</b> from hitting your target goal!`;
+  block.style.display='block';
+  textEl.innerHTML='<div class="insight-loader"><span>Analysing</span><div class="insight-dots"><span>.</span><span>.</span><span>.</span></div></div>';
+
+  const prompt=`You are a friendly Malaysian personal finance assistant for TNG (Touch n Go) savings app. Analyse this user's savings data and give ONE concise, actionable insight in 2-3 sentences. Be specific, encouraging, and use RM for currency. Write in plain English (no markdown). Data: net savings RM${total.toFixed(2)}, ${deposits.length} deposits, ${withdrawals.length} withdrawals, goal: ${goal?'RM'+goal.toFixed(2):'not set'}, category breakdown: ${JSON.stringify(catBreakdown)}. Focus on the most useful observation: trend, goal progress, or a specific category pattern.`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await resp.json();
+    const text=(data.content||[]).map(b=>b.text||'').join('').trim();
+    if(text){
+      aiInsightCache={key:cacheKey,text:text};
+      textEl.textContent=text
+    }else{
+      textEl.textContent='Keep going — every deposit counts!'
     }
-  } else {
-    insightText.innerHTML = "💡 **Tip:** You haven't configured a strategic milestone target yet. Setting an explicit personal savings goal improves user consistency by 40%.";
+  }catch(e){
+    textEl.textContent='Set a savings goal to unlock personalised insights.'
   }
 }
 
-function exportToCSV() {
-  const txns = myTxns();
-  if(!txns.length) { toast('No transactions to export.'); return; }
-  
-  let csvContent = "data:text/csv;charset=utf-8,ID,Date,Description,Category,Amount(RM)\n";
-  txns.forEach(t => {
-    csvContent += `"${t.id}","${t.date}","${t.desc.replace(/"/g, '""')}","${t.category || 'General'}",${t.amount}\n`;
-  });
-
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", `TNG_Savings_Statement_${curUser().name}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  toast('CSV download triggered');
+// ── TRANSACTION TYPE TOGGLE ────────────────────────────────────────────────
+function setTxnType(type){
+  currentTxnType=type;
+  const isWit=type==='withdrawal';
+  document.getElementById('type-dep').classList.toggle('active',!isWit);
+  document.getElementById('type-wit').classList.toggle('active',isWit);
+  const btn=document.getElementById('add-btn');
+  const catSel=document.getElementById('add-cat');
+  if(isWit){
+    btn.innerHTML='<i class="ti ti-arrow-up-right"></i> record withdrawal';
+    btn.style.background='rgba(220,53,69,0.8)';
+    btn.style.boxShadow='0 4px 12px rgba(220,53,69,0.25)';
+    // Hide category and target for withdrawals, keep amount visible
+    catSel.style.display='none';
+    document.getElementById('add-target-wrap').style.display='none';
+  }else{
+    btn.innerHTML='<i class="ti ti-plus"></i> add deposit';
+    btn.style.background='';btn.style.boxShadow='';
+    catSel.style.display='';
+    document.getElementById('add-target-wrap').style.display='';
+  }
 }
 
-function renderJoint(){
-  const joints=myJoints();
-  const el=document.getElementById('joint-list');
-  if(!joints.length){el.innerHTML='<div class="empty-state"><i class="ti ti-users" aria-hidden="true"></i>No joint pots yet. Create one to save with others.</div>';return}
-  el.innerHTML=joints.map(j=>{
-    const txns = j.txns || [];
-    const membersList = j.members || [];
-    const total=txns.reduce((a,t)=>a+t.amount,0);
-    const memberNames=membersList.map(id=>S.users[id]?.name||'?');
-    return`<div class="card" style="cursor:pointer" onclick="openJointDetail('${j.id}')">
-      <div class="card-row">
-        <div class="txn-ic dep" style="background:rgba(0, 194, 168, 0.1)"><i class="ti ti-users" aria-hidden="true" style="color:var(--success)"></i></div>
-        <div class="card-info">
-          <div class="card-title">${j.name}</div>
-          <div class="card-sub">${memberNames.join(', ')}</div>
-        </div>
-        <div style="text-align:right">
-          <div class="card-amt">${fmt(total)}</div>
-          <div style="font-size:11px;color:var(--text-muted)">${membersList.length} members</div>
-        </div>
-      </div>
-    </div>`}).join('')
-}
-
+// ── STATS ─────────────────────────────────────────────────────────────────
 function renderStats(){
-  const txns=myTxns();const total=myTotal();const n=txns.length;
-  const max=n?Math.max(...txns.map(t=>t.amount)):0;const avg=n?total/n:0;
+  const txns=myTxns();
+  const deposits=txns.filter(t=>t.type!=='withdrawal');
+  const total=myTotal();
+  const n=deposits.length;
+  const max=n?Math.max(...deposits.map(t=>t.amount)):0;
+  const avg=n?deposits.reduce((a,t)=>a+t.amount,0)/n:0;
   document.getElementById('st-total').textContent=fmt(total);
-  document.getElementById('st-count').textContent=n;
+  document.getElementById('st-count').textContent=txns.length;
   document.getElementById('st-max').textContent=fmt(max);
   document.getElementById('st-avg').textContent=fmt(avg);
+
+  // Category chart
+  const catEl=document.getElementById('cat-chart');
+  const catTotals={};
+  deposits.forEach(t=>{const c=t.category||'General';catTotals[c]=(catTotals[c]||0)+t.amount});
+  const catEntries=Object.entries(catTotals).sort((a,b)=>b[1]-a[1]);
+  const maxCat=catEntries.length?catEntries[0][1]:1;
+  if(!catEntries.length){catEl.innerHTML='<div style="font-size:12px;color:var(--text-muted)">No deposit data yet.</div>'}
+  else{
+    catEl.innerHTML=catEntries.map(([cat,amt])=>{
+      const pct=Math.round(amt/maxCat*100);
+      const col=CAT_COLORS[cat]||'#0066FF';
+      return`<div class="cat-row">
+        <div class="cat-label">${cat}</div>
+        <div class="cat-bar-wrap"><div class="cat-bar" style="width:${pct}%;background:${col}"></div></div>
+        <div class="cat-amt">${fmt(amt)}</div>
+      </div>`
+    }).join('')
+  }
+
+  // Joint pots
   const jel=document.getElementById('st-joint');
   const joints=myJoints();
   if(!joints.length){jel.innerHTML='<div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">No joint pots yet.</div>';return}
   jel.innerHTML=joints.map(j=>{
-    const txns = j.txns || [];
-    const jt=txns.reduce((a,t)=>a+t.amount,0);
-    const mine=txns.filter(t=>t.byId===S.cur).reduce((a,t)=>a+t.amount,0);
+    const jt=(j.txns||[]).reduce((a,t)=>a+(t.type==='withdrawal'?-t.amount:t.amount),0);
+    const mine=(j.txns||[]).filter(t=>t.byId===S.cur).reduce((a,t)=>a+(t.type==='withdrawal'?-t.amount:t.amount),0);
     return`<div class="card" style="margin-bottom:8px">
       <div class="card-row">
-        <div class="txn-ic dep"><i class="ti ti-users" aria-hidden="true"></i></div>
+        <div class="txn-ic dep"><i class="ti ti-users"></i></div>
         <div class="card-info"><div class="card-title">${j.name}</div><div class="card-sub">my share: ${fmt(mine)}</div></div>
         <div class="card-amt">${fmt(jt)}</div>
       </div>
-    </div>`}).join('')
+    </div>`
+  }).join('')
 }
 
+// ── ADD TRANSACTION ───────────────────────────────────────────────────────
 function renderAddTarget(){
   const sel=document.getElementById('add-target');
   const joints=myJoints();
@@ -634,26 +781,33 @@ function renderAddTarget(){
 
 async function addDeposit(){
   const amt=parseFloat(document.getElementById('add-amt').value);
-  const desc=document.getElementById('add-desc').value.trim()||'Deposit';
-  const target=document.getElementById('add-target').value;
-  const category=document.getElementById('add-cat').value;
+  const rawDesc=document.getElementById('add-desc').value.trim();
+  const isWit=currentTxnType==='withdrawal';
+  const target=isWit?'me':document.getElementById('add-target').value;
+  const category=isWit?'Withdrawal':(document.getElementById('add-cat').value||'General');
+  const desc=rawDesc||(isWit?'Withdrawal':'Deposit');
   if(!amt||amt<=0){toast('Enter a valid amount');return}
   const now=new Date();
   const date=now.toLocaleDateString('en-MY',{day:'numeric',month:'short',year:'numeric'});
-  const txn={id:'t'+Date.now(),amount:amt,desc,date,category,byId:S.cur,by:curUser().name};
+  const txn={id:'t'+Date.now(),amount:amt,desc,date,category,type:isWit?'withdrawal':'deposit',byId:S.cur,by:curUser().name};
   if(target==='me'){
-    if(!S.users[S.cur].txns) S.users[S.cur].txns = [];
+    if(!S.users[S.cur].txns)S.users[S.cur].txns=[];
     S.users[S.cur].txns.push({...txn});
     await saveUsers();
   }else{
-    if(!S.joints[target].txns) S.joints[target].txns = [];
+    if(!S.joints[target].txns)S.joints[target].txns=[];
     S.joints[target].txns.push({...txn});
     await saveJoints();
   }
-  document.getElementById('add-amt').value='';document.getElementById('add-desc').value='';
-  renderHeader();toast('Added '+fmt(amt));
+  document.getElementById('add-amt').value='';
+  document.getElementById('add-desc').value='';
+  renderHeader();
+  toast((isWit?'Withdrew ':'Added ')+fmt(amt));
+  aiInsightCache={key:'',text:''};
+  if(activeTab==='mine')generateAiInsights()
 }
 
+// ── GOALS ─────────────────────────────────────────────────────────────────
 function openGoalModal(){
   openModal('savings goal',`
     <input class="inp" type="number" id="m-goal" placeholder="Target amount (RM)" value="${curUser().goal||''}">
@@ -665,7 +819,34 @@ function openGoalModal(){
 async function saveGoal(){
   const v=parseFloat(document.getElementById('m-goal').value);
   if(!v||v<=0){toast('Enter a valid amount');return}
-  S.users[S.cur].goal=v;await saveUsers();closeModal();renderHeader();toast('Goal set: '+fmt(v))
+  S.users[S.cur].goal=v;await saveUsers();closeModal();renderHeader();
+  aiInsightCache={key:'',text:''};generateAiInsights();
+  toast('Goal set: '+fmt(v))
+}
+
+// ── JOINT POTS ────────────────────────────────────────────────────────────
+function renderJoint(){
+  const joints=myJoints();
+  const el=document.getElementById('joint-list');
+  if(!joints.length){el.innerHTML='<div class="empty-state"><i class="ti ti-users"></i><strong>No joint pots</strong>Create one to save with others.</div>';return}
+  el.innerHTML=joints.map(j=>{
+    const txns=j.txns||[];
+    const membersList=j.members||[];
+    const total=txns.reduce((a,t)=>a+(t.type==='withdrawal'?-t.amount:t.amount),0);
+    const memberNames=membersList.map(id=>S.users[id]?.name||'?');
+    return`<div class="card" style="cursor:pointer" onclick="openJointDetail('${j.id}')">
+      <div class="card-row">
+        <div class="txn-ic dep" style="background:rgba(0,194,168,0.1)"><i class="ti ti-users" style="color:var(--success)"></i></div>
+        <div class="card-info">
+          <div class="card-title">${escHtml(j.name)}</div>
+          <div class="card-sub">${memberNames.map(escHtml).join(', ')}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="card-amt">${fmt(total)}</div>
+          <div style="font-size:11px;color:var(--text-muted)">${membersList.length} members</div>
+        </div>
+      </div>
+    </div>`}).join('')
 }
 
 function openCreateJoint(){
@@ -677,7 +858,7 @@ function openCreateJoint(){
       <label style="display:flex;align-items:center;gap:8px;padding:6px 0;cursor:pointer;border-bottom:1px solid var(--border)">
         <input type="checkbox" value="${u.id}" style="width:16px;height:16px">
         <div class="avatar" style="${avatarStyle(u.name,24)}">${initials(u.name)}</div>
-        <span style="font-size:13px">${u.name}</span>
+        <span style="font-size:13px">${escHtml(u.name)}</span>
       </label>`).join('')}
     </div>
     <div class="sheet-btns" style="margin-top:12px">
@@ -696,60 +877,48 @@ async function createJoint(){
 }
 
 let curJoint=null;
-function openJointDetail(jid){
-  curJoint=jid;renderJointDetail();showPage('pg-joint-detail')
-}
+function openJointDetail(jid){curJoint=jid;renderJointDetail();showPage('pg-joint-detail')}
 function renderJointDetail(){
   const j=S.joints[curJoint];if(!j)return;
-  const txns = j.txns || [];
-  const membersList = j.members || [];
-  const total=txns.reduce((a,t)=>a+t.amount,0);
-  
+  const txns=j.txns||[];const membersList=j.members||[];
+  const net=txns.reduce((a,t)=>a+(t.type==='withdrawal'?-t.amount:t.amount),0);
   document.getElementById('jd-name-label').textContent=j.name;
-  document.getElementById('jd-total').textContent=total.toFixed(2);
-  
+  document.getElementById('jd-total').textContent=net.toFixed(2);
   const names=membersList.map(id=>S.users[id]?.name||'?');
   document.getElementById('jd-members-label').textContent=names.join(' · ');
-  
-  // Render Goal Progress
-  const goal = j.goal || 0;
-  const pw = document.getElementById('jd-prog');
-  if(goal > 0){
-    pw.style.display = 'block';
-    const pct = Math.min(100, Math.round(total / goal * 100));
-    document.getElementById('jd-prog-pct').textContent = pct + '%';
-    document.getElementById('jd-prog-goal-txt').textContent = 'goal: ' + fmt(goal);
-    document.getElementById('jd-prog-fill').style.width = pct + '%';
-    document.getElementById('jd-goal-btn-txt').textContent = 'edit joint goal (' + fmt(goal) + ')';
-  } else {
-    pw.style.display = 'none';
-    document.getElementById('jd-goal-btn-txt').textContent = 'set joint goal';
-  }
-
+  const goal=j.goal||0;const pw=document.getElementById('jd-prog');
+  if(goal>0){
+    pw.style.display='block';
+    const pct=Math.min(100,Math.round(total/goal*100));
+    document.getElementById('jd-prog-pct').textContent=pct+'%';
+    document.getElementById('jd-prog-goal-txt').textContent='goal: '+fmt(goal);
+    document.getElementById('jd-prog-fill').style.width=pct+'%';
+    document.getElementById('jd-goal-btn-txt').textContent='edit joint goal ('+fmt(goal)+')';
+  }else{pw.style.display='none';document.getElementById('jd-goal-btn-txt').textContent='set joint goal'}
   const mel=document.getElementById('jd-members');
   mel.innerHTML=membersList.map(uid=>{
     const u=S.users[uid];if(!u)return'';
-    const contrib=txns.filter(t=>t.byId===uid).reduce((a,t)=>a+t.amount,0);
+    const memberNet=txns.filter(t=>t.byId===uid).reduce((a,t)=>a+(t.type==='withdrawal'?-t.amount:t.amount),0);
     return`<div class="member-row">
       <div class="avatar" style="${avatarStyle(u.name,30)}">${initials(u.name)}</div>
-      <div class="member-name">${u.name}</div>
-      <div class="member-amt">${fmt(contrib)}</div>
+      <div class="member-name">${escHtml(u.name)}</div>
+      <div class="member-amt" style="color:${memberNet<0?'var(--text-danger)':'var(--text-muted)'}">${memberNet<0?'-':''}${fmt(Math.abs(memberNet))}</div>
     </div>`}).join('');
-    
   const tel=document.getElementById('jd-txns');
   const txnsRev=[...txns].reverse().slice(0,20);
-  if(!txnsRev.length){tel.innerHTML='<div class="empty-state"><i class="ti ti-inbox" aria-hidden="true"></i>No deposits yet.</div>';return}
-  tel.innerHTML=txnsRev.map(t=>`
-    <div class="txn-row">
-      <div class="avatar" style="${avatarStyle(t.by||'?',30)}">${initials(t.by||'?')}</div>
-      <div class="txn-info"><div class="txn-desc">${t.desc}</div><div class="txn-meta">${t.by} · ${t.date}</div></div>
-      <div class="txn-amt">+${fmt(t.amount)}</div>
-    </div>`).join('')
+  if(!txnsRev.length){tel.innerHTML='<div class="empty-state"><i class="ti ti-inbox"></i>No transactions yet.</div>';return}
+  tel.innerHTML=txnsRev.map(t=>{
+    const isWit=t.type==='withdrawal';
+    return`<div class="txn-row">
+      <div class="txn-ic ${isWit?'wit':'dep'}"><i class="ti ${isWit?'ti-arrow-up-right':'ti-arrow-down-left'}"></i></div>
+      <div class="txn-info"><div class="txn-desc">${escHtml(t.desc)}</div><div class="txn-meta">${escHtml(t.by||'?')} · ${t.date}</div></div>
+      <div class="txn-amt ${isWit?'neg':'pos'}">${isWit?'-':'+'}<span>${fmt(t.amount)}</span></div>
+    </div>`}).join('')
 }
 
 function openAddMember(){
   const j=S.joints[curJoint];
-  const membersList = j.members || [];
+  const membersList=j.members||[];
   const others=Object.values(S.users).filter(u=>!membersList.includes(u.id));
   if(!others.length){toast('All users are already members');return}
   openModal('invite member',`
@@ -757,15 +926,15 @@ function openAddMember(){
       <div class="card" style="cursor:pointer;margin-bottom:8px" onclick="addMember('${u.id}')">
         <div class="card-row">
           <div class="avatar" style="${avatarStyle(u.name,30)}">${initials(u.name)}</div>
-          <div class="card-info"><div class="card-title">${u.name}</div></div>
-          <i class="ti ti-user-plus" aria-hidden="true" style="color:var(--accent)"></i>
+          <div class="card-info"><div class="card-title">${escHtml(u.name)}</div></div>
+          <i class="ti ti-user-plus" style="color:var(--accent)"></i>
         </div>
       </div>`).join('')}
     </div>
     <button class="btn-sec" onclick="closeModal()">cancel</button>`)
 }
 async function addMember(uid){
-  if(!S.joints[curJoint].members) S.joints[curJoint].members = [];
+  if(!S.joints[curJoint].members)S.joints[curJoint].members=[];
   S.joints[curJoint].members.push(uid);await saveJoints();closeModal();renderJointDetail();toast(S.users[uid].name+' added')
 }
 
@@ -783,13 +952,38 @@ async function doJointDeposit(){
   const desc=document.getElementById('m-jdesc').value.trim()||'Deposit';
   if(!amt||amt<=0){toast('Enter a valid amount');return}
   const now=new Date();const date=now.toLocaleDateString('en-MY',{day:'numeric',month:'short',year:'numeric'});
-  if(!S.joints[curJoint].txns) S.joints[curJoint].txns = [];
+  if(!S.joints[curJoint].txns)S.joints[curJoint].txns=[];
   S.joints[curJoint].txns.push({id:'t'+Date.now(),amount:amt,desc,date,byId:S.cur,by:curUser().name});
   await saveJoints();closeModal();renderJointDetail();renderHeader();toast('Added '+fmt(amt))
 }
 
+function openJointWithdraw(){
+  const j=S.joints[curJoint];
+  const net=((j.txns||[]).reduce((a,t)=>a+(t.type==='withdrawal'?-t.amount:t.amount),0));
+  openModal('withdraw from '+j.name,`
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Available: <b style="color:var(--text-primary)">${fmt(net)}</b></div>
+    <input class="inp" type="number" id="m-jwamt" placeholder="Amount (RM)" step="0.01" min="0.01">
+    <input class="inp" id="m-jwdesc" placeholder="Reason (optional)">
+    <div class="sheet-btns">
+      <button class="btn-sec" style="flex:1" onclick="closeModal()">cancel</button>
+      <button class="btn-pri" style="flex:1;margin-bottom:0;background:rgba(220,53,69,0.85);box-shadow:0 4px 12px rgba(220,53,69,0.25)" onclick="doJointWithdraw()"><i class="ti ti-arrow-up-right"></i> withdraw</button>
+    </div>`)
+}
+async function doJointWithdraw(){
+  const j=S.joints[curJoint];
+  const net=((j.txns||[]).reduce((a,t)=>a+(t.type==='withdrawal'?-t.amount:t.amount),0));
+  const amt=parseFloat(document.getElementById('m-jwamt').value);
+  const desc=document.getElementById('m-jwdesc').value.trim()||'Withdrawal';
+  if(!amt||amt<=0){toast('Enter a valid amount');return}
+  if(amt>net){toast('Amount exceeds pot balance');return}
+  const now=new Date();const date=now.toLocaleDateString('en-MY',{day:'numeric',month:'short',year:'numeric'});
+  if(!j.txns)j.txns=[];
+  j.txns.push({id:'t'+Date.now(),amount:amt,desc,date,type:'withdrawal',byId:S.cur,by:curUser().name});
+  await saveJoints();closeModal();renderJointDetail();renderHeader();toast('Withdrew '+fmt(amt))
+}
+
 function openJointGoalModal(){
-  const j = S.joints[curJoint];
+  const j=S.joints[curJoint];
   openModal('joint savings goal',`
     <input class="inp" type="number" id="m-jgoal" placeholder="Target amount (RM)" value="${j.goal||''}">
     <div class="sheet-btns">
@@ -797,32 +991,28 @@ function openJointGoalModal(){
       <button class="btn-pri" style="flex:1;margin-bottom:0" onclick="saveJointGoal()">save goal</button>
     </div>`)
 }
-
 async function saveJointGoal(){
-  const v = parseFloat(document.getElementById('m-jgoal').value);
-  if(!v || v <= 0){toast('Enter a valid amount');return}
-  
-  S.joints[curJoint].goal = v;
-  await saveJoints();
-  
-  closeModal();
-  renderJointDetail();
-  toast('Joint goal set: ' + fmt(v));
+  const v=parseFloat(document.getElementById('m-jgoal').value);
+  if(!v||v<=0){toast('Enter a valid amount');return}
+  S.joints[curJoint].goal=v;await saveJoints();closeModal();renderJointDetail();toast('Joint goal set: '+fmt(v))
 }
 
 async function leaveJoint(){
   const j=S.joints[curJoint];
   if(!confirm('Leave "'+j.name+'"? Your contributions remain.'))return;
-  j.members=(j.members || []).filter(id=>id!==S.cur);
+  j.members=(j.members||[]).filter(id=>id!==S.cur);
   if(!j.members.length)delete S.joints[curJoint];
   await saveJoints();showMain('joint')
 }
 
 async function clearMyData(){
   if(!confirm('Clear all your personal transactions? Joint pot data is not affected.'))return;
-  S.users[S.cur].txns=[];S.users[S.cur].goal=0;await saveUsers();renderHeader();renderMine();renderStats();toast('Data cleared')
+  S.users[S.cur].txns=[];S.users[S.cur].goal=0;await saveUsers();
+  aiInsightCache={key:'',text:''};
+  renderHeader();renderMine();renderStats();toast('Data cleared')
 }
 
+// ── QR / RECEIPT ──────────────────────────────────────────────────────────
 function handleImg(e){
   const file=e.target.files[0];if(!file)return;
   const reader=new FileReader();
@@ -835,7 +1025,7 @@ function handleImg(e){
       const code=typeof jsQR!=='undefined'?jsQR(data.data,data.width,data.height):null;
       if(code){applyQR(code.data)}else{toast('No QR found. Enter manually.')}
     };img.src=ev.target.result;
-  };reader.readAsDataURL(file);e.target.value='';
+  };reader.readAsDataURL(file);e.target.value=''
 }
 function applyQR(text){
   const amtM=text.match(/(?:amount|amt|RM|MYR)[:\s]*([0-9]+(?:\.[0-9]{1,2})?)/i);
@@ -847,22 +1037,33 @@ function applyQR(text){
   toast('Read RM '+amt.toFixed(2)+' — confirm to add')
 }
 
+// ── CSV EXPORT ────────────────────────────────────────────────────────────
+function exportToCSV(){
+  const txns=myTxns();
+  if(!txns.length){toast('No transactions to export.');return}
+  let csv='ID,Date,Description,Category,Type,Amount(RM)\n';
+  txns.forEach(t=>{csv+=`"${t.id}","${t.date}","${(t.desc||'').replace(/"/g,'""')}","${t.category||'General'}","${t.type||'deposit'}",${t.amount}\n`});
+  const link=document.createElement('a');
+  link.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  link.download=`TNG_${curUser().name}_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(link);link.click();document.body.removeChild(link);
+  toast('CSV exported')
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────────────
 function openModal(title,bodyHTML){
   document.getElementById('modal-title').textContent=title;
   document.getElementById('modal-body').innerHTML=bodyHTML;
   document.getElementById('modal-layer').style.display='block'
 }
-function closeModal(e){if(!e||e.target===document.getElementById('modal-bg')){document.getElementById('modal-layer').style.display='none'}}
+function closeModal(e){if(!e||e.target===document.getElementById('modal-bg'))document.getElementById('modal-layer').style.display='none'}
 
 function toast(msg){
   const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2400)
 }
 
-(() => {
-  startDatabaseListeners();
-  showLogin();
-})();
+(()=>{startDatabaseListeners();showLogin()})();
 </script>
 </body>
 </html>
