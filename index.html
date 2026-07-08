@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>TNG Savings Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0EA5E9">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Broski Tabung — Savings Tracker</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <link rel="icon" type="image/png" href="Broski.png">
@@ -205,6 +207,281 @@
 
     @keyframes fadeOut { to { opacity: 0; transform: translateX(20px); } }
     .txn-row.deleting { animation: fadeOut 0.25s forwards; }
+
+
+    /* ── Modern upgrade theme ───────────────────────────────────────────── */
+    :root {
+      --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: "SF Mono", SFMono-Regular, ui-monospace, Consolas, "Liberation Mono", Menlo, monospace;
+      --surface-0: #061018;
+      --surface-1: rgba(14, 23, 35, 0.82);
+      --surface-2: rgba(20, 31, 47, 0.9);
+      --surface-3: rgba(255, 255, 255, 0.06);
+      --border: rgba(148, 163, 184, 0.16);
+      --border-strong: rgba(148, 163, 184, 0.3);
+      --border-danger: rgba(248, 113, 113, 0.36);
+      --text-primary: #F8FAFC;
+      --text-secondary: #CBD5E1;
+      --text-muted: #94A3B8;
+      --text-danger: #FB7185;
+      --accent: #38BDF8;
+      --accent-2: #7C3AED;
+      --accent-glow: rgba(56, 189, 248, 0.2);
+      --success: #34D399;
+      --warning: #FBBF24;
+      --shadow-soft: 0 18px 55px rgba(2, 8, 23, 0.38);
+      --radius-lg: 22px;
+      --radius-md: 16px;
+    }
+
+    :root[data-theme="light"] {
+      --surface-0: #F5F7FB;
+      --surface-1: rgba(255, 255, 255, 0.84);
+      --surface-2: rgba(248, 250, 252, 0.96);
+      --surface-3: rgba(15, 23, 42, 0.04);
+      --border: rgba(15, 23, 42, 0.1);
+      --border-strong: rgba(15, 23, 42, 0.18);
+      --border-danger: rgba(225, 29, 72, 0.22);
+      --text-primary: #0F172A;
+      --text-secondary: #334155;
+      --text-muted: #64748B;
+      --text-danger: #E11D48;
+      --accent: #0284C7;
+      --accent-2: #7C3AED;
+      --accent-glow: rgba(2, 132, 199, 0.16);
+      --success: #059669;
+      --warning: #D97706;
+      --shadow-soft: 0 18px 55px rgba(15, 23, 42, 0.14);
+    }
+
+    html { background: #020617; }
+    body {
+      background:
+        radial-gradient(circle at 14% 12%, rgba(56, 189, 248, .24), transparent 32%),
+        radial-gradient(circle at 86% 4%, rgba(124, 58, 237, .22), transparent 28%),
+        radial-gradient(circle at 50% 100%, rgba(52, 211, 153, .14), transparent 34%),
+        linear-gradient(135deg, #020617 0%, #08111F 48%, #040816 100%);
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+      overflow-x: hidden;
+    }
+    :root[data-theme="light"] body {
+      background:
+        radial-gradient(circle at 10% 10%, rgba(14, 165, 233, .18), transparent 34%),
+        radial-gradient(circle at 88% 0%, rgba(124, 58, 237, .12), transparent 30%),
+        linear-gradient(135deg, #F8FAFC 0%, #EEF6FF 52%, #F6F1FF 100%);
+    }
+
+    .mobile-container {
+      max-width: 430px;
+      background: linear-gradient(180deg, rgba(6, 16, 24, .92), rgba(8, 14, 26, .96));
+      box-shadow: var(--shadow-soft);
+      isolation: isolate;
+    }
+    :root[data-theme="light"] .mobile-container {
+      background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(245,247,251,.94));
+    }
+    @supports (backdrop-filter: blur(18px)) {
+      .mobile-container, .card, .stat-card, .cat-chart, .sheet, .insight-card, .mini-card, .goal-forecast, .settings-item, .profile-panel {
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+      }
+    }
+
+    @media (min-width: 480px) {
+      body { padding: 22px 0; }
+      .mobile-container {
+        min-height: min(880px, calc(100vh - 44px));
+        border-radius: 34px;
+        border: 1px solid rgba(255, 255, 255, .16);
+        overflow: hidden;
+      }
+      :root[data-theme="light"] .mobile-container { border-color: rgba(15,23,42,.12); }
+      .modal-bg { border-radius: 0 0 34px 34px !important; }
+    }
+
+    .page.active { animation: pageIn .24s ease both; }
+    @keyframes pageIn { from { opacity: .6; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    .hdr {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(145deg, rgba(14, 165, 233, .95) 0%, rgba(37, 99, 235, .9) 46%, rgba(124, 58, 237, .95) 100%);
+      padding: calc(20px + env(safe-area-inset-top)) 18px 22px;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+    }
+    .hdr::before {
+      content: '';
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      right: -90px;
+      top: -110px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.22);
+      filter: blur(6px);
+    }
+    .hdr::after {
+      content: '';
+      position: absolute;
+      inset: auto -40px -80px -40px;
+      height: 140px;
+      background: radial-gradient(circle, rgba(255,255,255,.2), transparent 62%);
+      pointer-events: none;
+    }
+    .hdr > * { position: relative; z-index: 1; }
+    .hdr-top { align-items: flex-start; gap: 12px; }
+    .brand-lockup { display: flex; align-items: center; gap: 11px; min-width: 0; }
+    .brand-lockup img { width: 38px; height: 38px; border-radius: 13px; object-fit: cover; box-shadow: 0 12px 24px rgba(15,23,42,.25); border: 1px solid rgba(255,255,255,.35); }
+    .brand-title { font-size: 14px; font-weight: 800; color: #fff; letter-spacing: .1px; }
+    .brand-sub { display: flex; align-items: center; gap: 6px; font-size: 11px; color: rgba(255,255,255,.72); margin-top: 2px; }
+    .sync-dot { width: 7px; height: 7px; border-radius: 999px; background: var(--warning); box-shadow: 0 0 0 4px rgba(255,255,255,.1); }
+    .sync-dot.online { background: #34D399; }
+    .sync-dot.offline { background: #FB7185; }
+    .top-actions { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.18);
+      color: #fff;
+      background: rgba(255,255,255,.12);
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(15,23,42,.16);
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+    }
+    .icon-btn:hover { background: rgba(255,255,255,.18); }
+    .icon-btn:active { transform: scale(.95); }
+    :root[data-theme="light"] .auth-theme-btn, :root[data-theme="light"] .settings-item .item-icon { color: var(--text-primary); }
+    .auth-theme-btn { position: absolute; right: 18px; top: 18px; z-index: 4; color: var(--text-primary); background: var(--surface-1); border-color: var(--border); }
+    .user-chip { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.18); padding: 6px 9px; box-shadow: 0 8px 24px rgba(15,23,42,.14); }
+
+    .bal-label { color: rgba(255,255,255,.68); margin-top: 14px; }
+    .bal-amt { font-size: 39px; font-weight: 800; letter-spacing: -2px; text-shadow: 0 12px 34px rgba(15,23,42,.24); }
+    .privacy-on .money, .privacy-on #hdr-bal, .privacy-on #jd-total { filter: blur(9px); user-select: none; }
+    .hdr-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 16px; }
+    .hdr-metric {
+      background: rgba(255,255,255,.13);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 15px;
+      padding: 10px;
+      min-width: 0;
+    }
+    .hdr-metric span { display: block; color: rgba(255,255,255,.68); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+    .hdr-metric b { display: block; color: #fff; font-family: var(--font-mono); font-size: 12px; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .prog-wrap { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.16); border-radius: 15px; }
+    .prog-fill { background: linear-gradient(90deg, #34D399 0%, #A7F3D0 48%, #FDE68A 100%); }
+
+    .tabs {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(8, 14, 26, .86);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+      padding: 6px;
+      gap: 4px;
+    }
+    :root[data-theme="light"] .tabs { background: rgba(255,255,255,.78); }
+    .tab-btn { border-bottom: none; border-radius: 14px; padding: 9px 2px; letter-spacing: .25px; }
+    .tab-btn i { font-size: 19px; }
+    .tab-btn.on { background: var(--surface-2); color: var(--accent); border-bottom-color: transparent; box-shadow: inset 0 0 0 1px var(--border); }
+
+    .body { padding: 16px 16px 22px; scrollbar-width: thin; }
+    .sec-title { color: var(--text-secondary); letter-spacing: .9px; }
+    .card, .stat-card, .cat-chart, .insight-card, .mini-card, .goal-forecast, .profile-panel, .settings-item {
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: 0 10px 30px rgba(2, 8, 23, .14);
+    }
+    :root[data-theme="light"] .card, :root[data-theme="light"] .stat-card, :root[data-theme="light"] .cat-chart, :root[data-theme="light"] .insight-card, :root[data-theme="light"] .mini-card, :root[data-theme="light"] .goal-forecast, :root[data-theme="light"] .profile-panel, :root[data-theme="light"] .settings-item {
+      box-shadow: 0 12px 34px rgba(15,23,42,.08);
+    }
+    .card { border-radius: 18px; }
+    .card:hover { border-color: var(--border-strong); }
+    .txn-row { border-bottom-color: var(--border); }
+    .txn-ic { border-radius: 14px; }
+    .txn-ic.dep { background: rgba(52, 211, 153, .12); color: var(--success); border-color: rgba(52,211,153,.18); }
+    .txn-ic.wit { background: rgba(251, 113, 133, .12); color: var(--text-danger); border-color: rgba(251,113,133,.18); }
+    .filter-pill { border-radius: 999px; background: var(--surface-1); }
+    .filter-pill.active { background: linear-gradient(135deg, var(--accent), var(--accent-2)); border-color: transparent; box-shadow: 0 10px 24px var(--accent-glow); }
+
+    .dashboard-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-bottom: 12px; }
+    .mini-card { padding: 13px; min-height: 86px; }
+    .mini-card .mini-label { color: var(--text-muted); text-transform: uppercase; font-size: 10px; font-weight: 800; letter-spacing: .55px; }
+    .mini-card .mini-val { margin-top: 7px; font-family: var(--font-mono); font-size: 16px; font-weight: 800; color: var(--text-primary); }
+    .mini-card .mini-sub { margin-top: 4px; font-size: 11px; color: var(--text-muted); line-height: 1.35; }
+    .goal-forecast { padding: 14px; margin-bottom: 12px; display: none; position: relative; overflow: hidden; }
+    .goal-forecast::before { content:''; position:absolute; inset:0; background: linear-gradient(135deg, rgba(56,189,248,.14), rgba(124,58,237,.1)); pointer-events:none; }
+    .goal-forecast > * { position: relative; z-index: 1; }
+    .forecast-title { display:flex; align-items:center; gap:7px; color: var(--accent); font-size: 11px; text-transform: uppercase; letter-spacing: .6px; font-weight: 800; margin-bottom: 6px; }
+    .forecast-copy { color: var(--text-secondary); font-size: 13px; line-height: 1.5; }
+    .quick-action-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; margin-bottom: 14px; }
+    .mini-action { border: 1px solid var(--border); background: var(--surface-1); color: var(--text-secondary); border-radius: 14px; padding: 10px 6px; font-weight: 700; font-size: 11px; cursor: pointer; display:flex; flex-direction: column; align-items:center; gap:5px; }
+    .mini-action i { font-size: 18px; color: var(--accent); }
+    .search-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .search-row .inp { margin-bottom: 0; }
+    .search-row select { max-width: 116px; }
+
+    .inp { border-radius: 14px; background: var(--surface-2); border-color: var(--border); color: var(--text-primary); }
+    .inp::placeholder { color: var(--text-muted); }
+    .btn-pri { background: linear-gradient(135deg, var(--accent), var(--accent-2)); border-radius: 14px; box-shadow: 0 12px 28px var(--accent-glow); }
+    .btn-sec, .btn-danger { border-radius: 14px; background: var(--surface-1); }
+    .quick-amounts { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 8px; margin: 10px 0; }
+    .quick-chip { border: 1px solid var(--border); background: var(--surface-1); color: var(--text-secondary); border-radius: 999px; padding: 8px 4px; font-size: 12px; font-weight: 800; cursor: pointer; }
+    .quick-chip:active { transform: scale(.96); }
+
+    .flow-chart { background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; margin-bottom: 16px; }
+    .flow-row { display: grid; grid-template-columns: 52px 1fr 72px; gap: 10px; align-items: center; margin-bottom: 12px; }
+    .flow-row:last-child { margin-bottom: 0; }
+    .flow-label { font-size: 11px; color: var(--text-muted); font-weight: 800; text-transform: uppercase; }
+    .flow-bars { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .flow-track { height: 7px; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
+    .flow-fill { height: 100%; border-radius: 999px; transition: width .5s ease; }
+    .flow-fill.dep { background: var(--success); }
+    .flow-fill.wit { background: var(--text-danger); }
+    .flow-net { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); text-align: right; }
+    .milestone-list { display: grid; gap: 9px; margin-bottom: 16px; }
+    .milestone { display:flex; align-items:center; gap: 10px; background: var(--surface-1); border:1px solid var(--border); border-radius: 15px; padding: 11px; }
+    .milestone i { color: var(--accent); font-size: 20px; }
+    .milestone div { min-width:0; }
+    .milestone strong { display:block; font-size: 13px; color: var(--text-primary); }
+    .milestone span { display:block; font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .profile-panel { padding: 16px; margin-bottom: 12px; }
+    .profile-top { display:flex; align-items:center; gap: 12px; margin-bottom: 14px; }
+    .profile-name { font-size: 17px; font-weight: 800; }
+    .profile-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .profile-stats { display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; }
+    .profile-stat { background: var(--surface-3); border-radius: 13px; padding: 9px; }
+    .profile-stat span { display:block; color: var(--text-muted); font-size: 10px; text-transform: uppercase; font-weight: 800; }
+    .profile-stat b { display:block; color: var(--text-primary); font-family: var(--font-mono); font-size: 12px; margin-top: 4px; overflow:hidden; text-overflow:ellipsis; }
+    .settings-stack { display:grid; gap: 9px; }
+    .settings-item { width:100%; display:flex; align-items:center; gap: 12px; padding: 13px; border-radius: 16px; color: var(--text-primary); cursor:pointer; text-align:left; }
+    .settings-item .item-icon { width: 34px; height: 34px; display:flex; align-items:center; justify-content:center; border-radius: 12px; background: linear-gradient(135deg, rgba(56,189,248,.18), rgba(124,58,237,.16)); color: var(--accent); flex-shrink: 0; }
+    .settings-item .item-copy { flex: 1; min-width: 0; }
+    .settings-item strong { display:block; font-size: 13px; }
+    .settings-item span { display:block; font-size: 11px; color: var(--text-muted); margin-top: 2px; line-height:1.35; }
+    .settings-item .chev { color: var(--text-muted); }
+
+    .sheet { border-radius: 26px 26px 0 0; background: rgba(14, 23, 35, .96); border-top-color: var(--border-strong); }
+    :root[data-theme="light"] .sheet { background: rgba(255,255,255,.96); }
+    .toast { background: var(--surface-2); border-color: var(--border-strong); color: var(--text-primary); box-shadow: 0 18px 40px rgba(2,8,23,.28); }
+
+    @media (max-width: 360px) {
+      .bal-amt { font-size: 33px; }
+      .hdr-metrics { grid-template-columns: 1fr; }
+      .quick-action-grid { grid-template-columns: 1fr; }
+      .tabs { gap: 2px; }
+      .tab-btn { font-size: 10px; }
+    }
+
   </style>
 </head>
 <body>
@@ -215,6 +492,7 @@
   <div class="toast-wrap"><div class="toast" id="toast"></div></div>
 
   <div id="pg-login" class="page active">
+    <button class="icon-btn auth-theme-btn" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme"><i class="ti ti-sun-moon" data-theme-icon></i></button>
     <div style="padding:48px 24px 24px">
       <div style="display:flex;align-items:center;gap:15px;margin-bottom:36px">
   <img src="Broski.png" alt="Broski Tabung Logo" style="width:60px; height:60px; border-radius:12px; object-fit:cover;">
@@ -259,15 +537,29 @@
   <div id="pg-main" class="page">
     <div class="hdr">
       <div class="hdr-top">
-        <div class="logo"><div class="logo-dot">T</div> savings</div>
-        <button class="user-chip" onclick="logout()" id="user-chip-btn">
-          <div class="avatar" id="hdr-avatar" style="width:22px;height:22px;font-size:9px"></div>
-          <span id="hdr-name"></span>
-          <i class="ti ti-chevron-down" aria-hidden="true" style="font-size:12px;opacity:.6"></i>
-        </button>
+        <div class="brand-lockup">
+          <img src="Broski.png" alt="Broski Tabung Logo">
+          <div>
+            <div class="brand-title">Broski Tabung</div>
+            <div class="brand-sub"><span class="sync-dot" id="sync-dot"></span><span id="sync-status">connecting</span></div>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button class="icon-btn" onclick="togglePrivacy()" title="Hide / show balances" aria-label="Hide or show balances"><i class="ti ti-eye" id="privacy-icon"></i></button>
+          <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme"><i class="ti ti-sun-moon" data-theme-icon></i></button>
+          <button class="user-chip" onclick="logout()" id="user-chip-btn">
+            <div class="avatar" id="hdr-avatar" style="width:22px;height:22px;font-size:9px"></div>
+            <span id="hdr-name"></span>
+          </button>
+        </div>
       </div>
       <div class="bal-label">my savings</div>
       <div class="bal-amt"><small>RM</small><span id="hdr-bal">0.00</span></div>
+      <div class="hdr-metrics">
+        <div class="hdr-metric"><span>This month</span><b class="money" id="hdr-month-net">RM 0.00</b></div>
+        <div class="hdr-metric"><span>Goal left</span><b class="money" id="hdr-goal-left">Set goal</b></div>
+        <div class="hdr-metric"><span>Joint total</span><b class="money" id="hdr-joint-total">RM 0.00</b></div>
+      </div>
       <div class="prog-wrap" id="hdr-prog" style="display:none">
         <div class="prog-meta"><span id="prog-pct"></span><span id="prog-goal-txt"></span></div>
         <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
@@ -279,11 +571,19 @@
       <button class="tab-btn" onclick="switchTab('joint',this)"><i class="ti ti-users" aria-hidden="true"></i>joint</button>
       <button class="tab-btn" onclick="switchTab('add',this)"><i class="ti ti-plus" aria-hidden="true"></i>add</button>
       <button class="tab-btn" onclick="switchTab('stats',this)"><i class="ti ti-chart-bar" aria-hidden="true"></i>stats</button>
+      <button class="tab-btn" onclick="switchTab('settings',this)"><i class="ti ti-settings" aria-hidden="true"></i>settings</button>
     </div>
 
     <div id="tab-mine" class="body">
+      <div class="dashboard-grid" id="mine-summary"></div>
+      <div class="goal-forecast" id="goal-forecast"></div>
+      <div class="quick-action-grid">
+        <button class="mini-action" onclick="goTab('add')"><i class="ti ti-plus"></i><span>Add money</span></button>
+        <button class="mini-action" onclick="openGoalModal()"><i class="ti ti-target-arrow"></i><span>Goal</span></button>
+        <button class="mini-action" onclick="copySummary()"><i class="ti ti-copy"></i><span>Copy summary</span></button>
+      </div>
       <div class="insight-card" id="ai-insight-block" style="display:none">
-        <div class="insight-title"><i class="ti ti-sparkles" aria-hidden="true"></i> AI Insight</div>
+        <div class="insight-title"><i class="ti ti-sparkles" aria-hidden="true"></i> Smart Insight</div>
         <div class="insight-desc" id="ai-insight-text">
           <div class="insight-loader"><span>Thinking</span><div class="insight-dots"><span>.</span><span>.</span><span>.</span></div></div>
         </div>
@@ -303,7 +603,14 @@
         <div class="filter-pill" onclick="filterTxns('Withdrawal', this)">Withdrawals</div>
       </div>
 
-      <input class="inp" id="search-txns" placeholder="🔍 Search..." oninput="renderMine()" style="margin-bottom:12px;padding:8px 12px;font-size:13px;">
+      <div class="search-row">
+        <input class="inp" id="search-txns" placeholder="Search transactions..." oninput="renderMine()" style="padding:9px 12px;font-size:13px;">
+        <select class="inp" id="sort-txns" onchange="renderMine()" style="padding:9px 32px 9px 10px;font-size:12px;">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="highest">Highest</option>
+        </select>
+      </div>
 
       <div id="mine-txns"></div>
       <div style="margin-top:14px">
@@ -339,9 +646,18 @@
           <option value="Bonus">Bonus</option>
           <option value="Cashback">Cashback</option>
           <option value="Salary">Salary</option>
+          <option value="Side Hustle">Side Hustle</option>
+          <option value="Interest">Interest</option>
+          <option value="Gift">Gift</option>
         </select>
       </div>
-      <div style="margin-bottom:10px"></div>
+      <div class="quick-amounts" aria-label="Quick amounts">
+        <button class="quick-chip" type="button" onclick="quickAmount(5)">+RM5</button>
+        <button class="quick-chip" type="button" onclick="quickAmount(10)">+RM10</button>
+        <button class="quick-chip" type="button" onclick="quickAmount(20)">+RM20</button>
+        <button class="quick-chip" type="button" onclick="quickAmount(50)">+RM50</button>
+      </div>
+      <input class="inp" type="date" id="add-date" aria-label="Transaction date">
       <input class="inp" id="add-desc" placeholder="Note (optional)">
       <button class="btn-pri" id="add-btn" onclick="addDeposit()"><i class="ti ti-plus" aria-hidden="true"></i> add deposit</button>
       <div style="border-top:1px solid var(--border);margin:20px 0"></div>
@@ -366,9 +682,54 @@
       <div class="sec-title">by category</div>
       <div class="cat-chart" id="cat-chart"><div style="font-size:12px;color:var(--text-muted)">No data yet.</div></div>
 
+      <div class="sec-title">6-month cash flow</div>
+      <div class="flow-chart" id="flow-chart"><div style="font-size:12px;color:var(--text-muted)">No data yet.</div></div>
+
+      <div class="sec-title">milestones</div>
+      <div class="milestone-list" id="st-milestones"></div>
+
       <div class="sec-title" style="margin-top:6px">joint pot totals</div>
       <div id="st-joint"></div>
       <button class="btn-danger" onclick="clearMyData()"><i class="ti ti-trash" aria-hidden="true"></i> clear my data</button>
+    </div>
+
+    <div id="tab-settings" class="body" style="display:none">
+      <div class="sec-title">account</div>
+      <div id="settings-profile"></div>
+      <div class="sec-title">tools</div>
+      <div class="settings-stack">
+        <button class="settings-item" onclick="openEditProfile()">
+          <span class="item-icon"><i class="ti ti-user-edit"></i></span>
+          <span class="item-copy"><strong>Edit profile</strong><span>Update your display name.</span></span>
+          <i class="ti ti-chevron-right chev"></i>
+        </button>
+        <button class="settings-item" onclick="openChangePin()">
+          <span class="item-icon"><i class="ti ti-lock"></i></span>
+          <span class="item-copy"><strong>Change PIN</strong><span>Keep your tracker protected with a 4-digit PIN.</span></span>
+          <i class="ti ti-chevron-right chev"></i>
+        </button>
+        <button class="settings-item" onclick="togglePrivacy()">
+          <span class="item-icon"><i class="ti ti-eye"></i></span>
+          <span class="item-copy"><strong>Privacy mode</strong><span>Blur balances when sharing your screen.</span></span>
+          <i class="ti ti-chevron-right chev"></i>
+        </button>
+        <button class="settings-item" onclick="exportBackup()">
+          <span class="item-icon"><i class="ti ti-database-export"></i></span>
+          <span class="item-copy"><strong>Export backup</strong><span>Download your profile, goal, and transactions as JSON.</span></span>
+          <i class="ti ti-chevron-right chev"></i>
+        </button>
+        <button class="settings-item" onclick="document.getElementById('backup-file').click()">
+          <span class="item-icon"><i class="ti ti-database-import"></i></span>
+          <span class="item-copy"><strong>Import backup</strong><span>Restore a previously exported Broski Tabung JSON file.</span></span>
+          <i class="ti ti-chevron-right chev"></i>
+        </button>
+        <button class="settings-item" onclick="copySummary()">
+          <span class="item-icon"><i class="ti ti-clipboard-text"></i></span>
+          <span class="item-copy"><strong>Copy summary</strong><span>Share a quick savings progress readout.</span></span>
+          <i class="ti ti-chevron-right chev"></i>
+        </button>
+      </div>
+      <input type="file" id="backup-file" accept="application/json,.json" style="display:none" onchange="handleBackupImport(event)">
     </div>
   </div>
 
@@ -433,11 +794,19 @@ const firebaseConfig = {
   appId: "1:156222485001:web:85256b822abccf5813bed8"
 };
 
-const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+var usingLocalDb=false;
+let app=null;
+let db;
+if(window.firebase&&firebase.initializeApp&&firebase.database){
+  app=firebase.initializeApp(firebaseConfig);
+  db=firebase.database();
+}else{
+  usingLocalDb=true;
+  db=createLocalDatabase('broski_tabung_local_fallback_v2');
+}
 
 const COLORS=['#0066FF','#00C2A8','#FF7043','#9C27B0','#FF9800','#E91E63'];
-const CAT_COLORS = { General:'#0066FF', Bonus:'#00C2A8', Cashback:'#FFAA00', Salary:'#9C27B0', Withdrawal:'#FF6B6B' };
+const CAT_COLORS = { General:'#38BDF8', Bonus:'#34D399', Cashback:'#FBBF24', Salary:'#A78BFA', 'Side Hustle':'#F97316', Interest:'#22C55E', Gift:'#EC4899', Withdrawal:'#FB7185' };
 
 function initials(name){return name?name.slice(0,2).toUpperCase():'??'}
 function colorIdx(name){let h=0;for(let c of name)h=(h*31+c.charCodeAt(0))%COLORS.length;return h}
@@ -449,6 +818,93 @@ let activeTab='mine';
 let currentCategoryFilter='all';
 let currentTxnType='deposit';
 let aiInsightCache={key:'',text:''};
+
+const PREF_KEY='broski_tabung_preferences_v2';
+const DEFAULT_PREFS={theme:'dark',privacy:false};
+let prefs=(()=>{try{return {...DEFAULT_PREFS,...JSON.parse(localStorage.getItem(PREF_KEY)||'{}')}}catch(e){return {...DEFAULT_PREFS}}})();
+
+function setText(id,value){const el=document.getElementById(id);if(el)el.textContent=value}
+function savePrefs(){try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch(e){}}
+function applyPreferences(){
+  document.documentElement.dataset.theme=prefs.theme;
+  document.body.classList.toggle('privacy-on',!!prefs.privacy);
+  document.querySelectorAll('[data-theme-icon]').forEach(i=>{i.className=prefs.theme==='dark'?'ti ti-sun':'ti ti-moon'});
+  const privacyIcon=document.getElementById('privacy-icon');
+  if(privacyIcon)privacyIcon.className=prefs.privacy?'ti ti-eye-off':'ti ti-eye';
+}
+function toggleTheme(){prefs.theme=prefs.theme==='dark'?'light':'dark';savePrefs();applyPreferences();toast((prefs.theme==='dark'?'Dark':'Light')+' theme enabled')}
+function togglePrivacy(){prefs.privacy=!prefs.privacy;savePrefs();applyPreferences();toast(prefs.privacy?'Balances hidden':'Balances visible')}
+function setSyncStatus(label,state){
+  setText('sync-status',label);
+  const dot=document.getElementById('sync-dot');
+  if(dot){dot.className='sync-dot '+(state||'')}
+}
+function initConnectivity(){
+  if(usingLocalDb){setSyncStatus('local save','online');return}
+  const update=()=>setSyncStatus(navigator.onLine?'online':'offline',navigator.onLine?'online':'offline');
+  window.addEventListener('online',update);window.addEventListener('offline',update);update();
+  try{db.ref('.info/connected').on('value',snap=>{setSyncStatus(snap.val()?'synced':(navigator.onLine?'connecting':'offline'),snap.val()?'online':(navigator.onLine?'':'offline'))})}catch(e){}
+}
+function todayInputValue(d=new Date()){
+  const off=d.getTimezoneOffset();
+  const local=new Date(d.getTime()-off*60000);
+  return local.toISOString().slice(0,10);
+}
+function formatDateLabel(dateISO){
+  const d=dateISO?new Date(dateISO+'T00:00:00'):new Date();
+  return d.toLocaleDateString('en-MY',{day:'numeric',month:'short',year:'numeric'});
+}
+function parseTxnDate(t){
+  if(t&&t.dateISO){const d=new Date(t.dateISO+'T00:00:00');if(!isNaN(d))return d}
+  if(t&&t.date){const d=new Date(t.date);if(!isNaN(d))return d}
+  return new Date(0);
+}
+function monthKeyFromDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
+function txnMonthKey(t){return monthKeyFromDate(parseTxnDate(t))}
+function monthLabelFromKey(key){
+  const [y,m]=key.split('-').map(Number);
+  return new Date(y,m-1,1).toLocaleDateString('en-MY',{month:'short',year:'numeric'});
+}
+function lastMonthKeys(count=6){
+  const now=new Date();const out=[];
+  for(let i=count-1;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);out.push(monthKeyFromDate(d))}
+  return out;
+}
+function calcMonth(txns,key){
+  return txns.filter(t=>txnMonthKey(t)===key).reduce((a,t)=>{
+    if(t.type==='withdrawal')a.withdrawals+=Number(t.amount||0);else a.deposits+=Number(t.amount||0);
+    a.net=a.deposits-a.withdrawals;return a;
+  },{deposits:0,withdrawals:0,net:0});
+}
+function quickAmount(value){
+  const inp=document.getElementById('add-amt');
+  const current=parseFloat(inp.value)||0;
+  inp.value=(current+value).toFixed(2);
+  inp.focus();
+}
+function setDefaultTxnDate(){const el=document.getElementById('add-date');if(el&&!el.value)el.value=todayInputValue()}
+function goTab(name){const btn=document.querySelector(`.tab-btn[onclick*="'${name}'"]`);if(btn)switchTab(name,btn)}
+function downloadText(filename, text, type='application/json'){
+  const blob=new Blob([text],{type});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement('a');
+  link.href=url;link.download=filename;document.body.appendChild(link);link.click();
+  document.body.removeChild(link);setTimeout(()=>URL.revokeObjectURL(url),500);
+}
+
+function createLocalDatabase(storageKey){
+  let data={};
+  try{data=JSON.parse(localStorage.getItem(storageKey)||'{}')||{}}catch(e){data={}}
+  const listeners={};
+  const persist=()=>{try{localStorage.setItem(storageKey,JSON.stringify(data))}catch(e){}};
+  const snap=(path)=>({val:()=>path==='.info/connected'?true:(data[path]||null)});
+  const notify=(path)=>{(listeners[path]||[]).forEach(cb=>setTimeout(()=>cb(snap(path)),0))};
+  return {ref(path){return {
+    on(event,cb){if(event==='value'){if(!listeners[path])listeners[path]=[];listeners[path].push(cb);setTimeout(()=>cb(snap(path)),0)}},
+    async set(value){data[path]=value;persist();notify(path);return value}
+  }}};
+}
+
 
 function startDatabaseListeners(){
   db.ref('tng_users').on('value',snap=>{S.users=snap.val()||{};renderUpdates()});
@@ -495,7 +951,7 @@ function renderUserList(){
     return`<div class="card" style="cursor:pointer;margin-bottom:8px" onclick="startLogin('${u.id}')">
       <div class="card-row">
         <div class="avatar" style="${avatarStyle(u.name)}">${initials(u.name)}</div>
-        <div class="card-info"><div class="card-title">${u.name}</div><div class="card-sub">${fmt(net)} saved</div></div>
+        <div class="card-info"><div class="card-title">${escHtml(u.name)}</div><div class="card-sub money">${fmt(net)} saved</div></div>
         <i class="ti ti-chevron-right" style="color:var(--text-muted)"></i>
       </div>
     </div>`}).join('')
@@ -551,23 +1007,33 @@ function switchTab(name,btn){
 function populateTab(name){
   if(name==='mine'){renderMine();generateAiInsights()}
   else if(name==='joint')renderJoint();
-  else if(name==='stats')renderStats()
+  else if(name==='add')setDefaultTxnDate();
+  else if(name==='stats')renderStats();
+  else if(name==='settings')renderSettings();
 }
 
 function renderHeader(){
   const u=curUser();const total=myTotal();
-  document.getElementById('hdr-name').textContent=u.name;
-  document.getElementById('hdr-bal').textContent=total.toFixed(2);
-  const av=document.getElementById('hdr-avatar');av.textContent=initials(u.name);av.style=avatarStyle(u.name,22);
-  const goal=u.goal||0;const pw=document.getElementById('hdr-prog');
+  setText('hdr-name',u.name);
+  setText('hdr-bal',total.toFixed(2));
+  const av=document.getElementById('hdr-avatar');if(av){av.textContent=initials(u.name);av.style=avatarStyle(u.name,22)}
+
+  const thisMonth=calcMonth(myTxns(),monthKeyFromDate(new Date()));
+  const jointTotal=myJoints().reduce((a,j)=>a+(j.txns||[]).reduce((b,t)=>b+(t.type==='withdrawal'?-t.amount:t.amount),0),0);
+  const goal=u.goal||0;
+  setText('hdr-month-net',fmt(thisMonth.net));
+  setText('hdr-joint-total',fmt(jointTotal));
+  setText('hdr-goal-left',goal>0?fmt(Math.max(0,goal-total)):'Set goal');
+
+  const pw=document.getElementById('hdr-prog');
   if(goal>0){
     pw.style.display='block';
-    const pct=Math.min(100,Math.round(total/goal*100)); // fixed net reference
-    document.getElementById('prog-pct').textContent=pct+'%';
-    document.getElementById('prog-goal-txt').textContent='goal: '+fmt(goal);
+    const pct=Math.max(0,Math.min(100,Math.round(total/goal*100)));
+    setText('prog-pct',pct+'%');
+    setText('prog-goal-txt','goal: '+fmt(goal));
     document.getElementById('prog-fill').style.width=pct+'%';
-    document.getElementById('goal-btn-txt').textContent='edit goal ('+fmt(goal)+')';
-  }else{pw.style.display='none';document.getElementById('goal-btn-txt').textContent='set savings goal'}
+    setText('goal-btn-txt','edit goal ('+fmt(goal)+')');
+  }else{pw.style.display='none';setText('goal-btn-txt','set savings goal')}
 }
 
 function filterTxns(category,btn){
@@ -577,23 +1043,26 @@ function filterTxns(category,btn){
 }
 
 function renderMine(){
+  renderMineSummary();
   let txns=[...myTxns()];
-  const q=document.getElementById('search-txns').value.toLowerCase().trim();
-  if(currentCategoryFilter==='Withdrawal') txns=txns.filter(t=>t.type==='withdrawal');
-  else if(currentCategoryFilter!=='all') txns=txns.filter(t=>(t.category||'General')===currentCategoryFilter&&t.type!=='withdrawal');
-  if(q) txns=txns.filter(t=>t.desc.toLowerCase().includes(q));
-  txns=[...txns].reverse().slice(0,40);
+  const searchEl=document.getElementById('search-txns');
+  const q=(searchEl?searchEl.value:'').toLowerCase().trim();
+  if(currentCategoryFilter==='Withdrawal')txns=txns.filter(t=>t.type==='withdrawal');
+  else if(currentCategoryFilter!=='all')txns=txns.filter(t=>(t.category||'General')===currentCategoryFilter&&t.type!=='withdrawal');
+  if(q)txns=txns.filter(t=>String(t.desc||'').toLowerCase().includes(q)||String(t.category||'').toLowerCase().includes(q)||String(t.date||'').toLowerCase().includes(q));
+
+  const sort=document.getElementById('sort-txns')?.value||'newest';
+  txns.sort((a,b)=>{
+    if(sort==='highest')return Number(b.amount||0)-Number(a.amount||0);
+    const diff=parseTxnDate(b)-parseTxnDate(a);
+    return sort==='oldest'?-diff:diff;
+  });
+  txns=txns.slice(0,60);
   const el=document.getElementById('mine-txns');
   if(!txns.length){el.innerHTML='<div class="empty-state"><i class="ti ti-inbox"></i><strong>Nothing here</strong>Add your first transaction above.</div>';return}
 
-  // Re-group properly by month label
   const byMonth={};
-  txns.forEach(t=>{
-    const parts=t.date?t.date.split(' '):[];
-    const label=(parts.length>=3)?parts[1]+' '+parts[2]:t.date;
-    if(!byMonth[label])byMonth[label]=[];
-    byMonth[label].push(t)
-  });
+  txns.forEach(t=>{const label=monthLabelFromKey(txnMonthKey(t));if(!byMonth[label])byMonth[label]=[];byMonth[label].push(t)});
 
   let html='';
   Object.entries(byMonth).forEach(([month,mTxns])=>{
@@ -603,10 +1072,10 @@ function renderMine(){
       html+=`<div class="txn-row" id="txrow-${t.id}">
         <div class="txn-ic ${isWit?'wit':'dep'}"><i class="ti ${isWit?'ti-arrow-up-right':'ti-arrow-down-left'}"></i></div>
         <div class="txn-info">
-          <div class="txn-desc">${escHtml(t.desc)}</div>
-          <div class="txn-meta">${t.date} · <span style="color:${isWit?'var(--text-danger)':'var(--accent)'};font-weight:600">${isWit?'Withdrawal':t.category||'General'}</span></div>
+          <div class="txn-desc">${escHtml(t.desc||'Transaction')}</div>
+          <div class="txn-meta">${escHtml(t.date||formatDateLabel(t.dateISO))} · <span style="color:${isWit?'var(--text-danger)':'var(--accent)'};font-weight:600">${isWit?'Withdrawal':escHtml(t.category||'General')}</span></div>
         </div>
-        <div class="txn-amt ${isWit?'neg':'pos'}">${isWit?'-':'+'}<span>${fmt(t.amount)}</span></div>
+        <div class="txn-amt ${isWit?'neg':'pos'}"><span class="money">${isWit?'-':'+'}${fmt(t.amount)}</span></div>
         <button class="txn-del" onclick="deleteTxn('${t.id}')" title="Delete"><i class="ti ti-x"></i></button>
       </div>`
     })
@@ -614,7 +1083,34 @@ function renderMine(){
   el.innerHTML=html
 }
 
+function renderMineSummary(){
+  const el=document.getElementById('mine-summary');
+  if(!el)return;
+  const txns=myTxns();const deposits=txns.filter(t=>t.type!=='withdrawal');const withdrawals=txns.filter(t=>t.type==='withdrawal');
+  const month=calcMonth(txns,monthKeyFromDate(new Date()));
+  const total=myTotal();const goal=curUser().goal||0;
+  const avgDeposit=deposits.length?deposits.reduce((a,t)=>a+Number(t.amount||0),0)/deposits.length:0;
+  const largest=deposits.length?Math.max(...deposits.map(t=>Number(t.amount||0))):0;
+  el.innerHTML=`
+    <div class="mini-card"><div class="mini-label">This month</div><div class="mini-val money">${fmt(month.net)}</div><div class="mini-sub">${fmt(month.deposits)} in · ${fmt(month.withdrawals)} out</div></div>
+    <div class="mini-card"><div class="mini-label">Goal progress</div><div class="mini-val money">${goal?Math.max(0,Math.round(total/goal*100))+'%':'No goal'}</div><div class="mini-sub">${goal?fmt(Math.max(0,goal-total))+' remaining':'Set a target to track pace'}</div></div>
+    <div class="mini-card"><div class="mini-label">Avg deposit</div><div class="mini-val money">${fmt(avgDeposit)}</div><div class="mini-sub">Across ${deposits.length} deposits</div></div>
+    <div class="mini-card"><div class="mini-label">Largest save</div><div class="mini-val money">${fmt(largest)}</div><div class="mini-sub">Best single deposit</div></div>`;
+  renderGoalForecast(total,goal,deposits);
+}
+function renderGoalForecast(total,goal,deposits){
+  const el=document.getElementById('goal-forecast');if(!el)return;
+  if(!goal){el.style.display='none';return}
+  const remaining=Math.max(0,goal-total);
+  const months=lastMonthKeys(3);
+  const monthlyAvg=months.reduce((a,k)=>a+calcMonth(deposits,k).deposits,0)/months.length;
+  let copy=remaining<=0?'Goal reached. You are ready to set a bigger target or create a new joint pot.':monthlyAvg>0?`At your recent average of ${fmt(monthlyAvg)} per month, this goal is about ${Math.ceil(remaining/monthlyAvg)} month${Math.ceil(remaining/monthlyAvg)===1?'':'s'} away.`:`Save consistently for the next few weeks to unlock a more accurate goal forecast.`;
+  el.style.display='block';
+  el.innerHTML=`<div class="forecast-title"><i class="ti ti-timeline"></i>Goal forecast</div><div class="forecast-copy">${copy}</div>`;
+}
+
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function escAttr(s){return escHtml(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 
 async function deleteTxn(tid){
   const row=document.getElementById('txrow-'+tid);
@@ -627,53 +1123,28 @@ async function deleteTxn(tid){
   toast('Transaction removed')
 }
 
-// ── AI INSIGHTS (real Claude API streaming) ────────────────────────────────
+// ── SMART INSIGHTS ────────────────────────────────────────────────────────
+function buildSmartInsight(){
+  const txns=myTxns();const total=myTotal();const goal=curUser().goal||0;
+  const deposits=txns.filter(t=>t.type!=='withdrawal');const withdrawals=txns.filter(t=>t.type==='withdrawal');
+  const thisMonth=calcMonth(txns,monthKeyFromDate(new Date()));
+  const catTotals={};deposits.forEach(t=>{const c=t.category||'General';catTotals[c]=(catTotals[c]||0)+Number(t.amount||0)});
+  const topCat=Object.entries(catTotals).sort((a,b)=>b[1]-a[1])[0];
+  if(goal>0){
+    const pct=Math.max(0,Math.min(100,Math.round(total/goal*100)));
+    if(pct>=100)return `You have reached your ${fmt(goal)} goal. Consider moving extra savings into a new target so your progress stays intentional.`;
+    return `You are ${pct}% toward your ${fmt(goal)} goal, with ${fmt(Math.max(0,goal-total))} left. This month your net movement is ${fmt(thisMonth.net)}, so a small recurring deposit could keep the pace steady.`;
+  }
+  if(withdrawals.length&&thisMonth.withdrawals>thisMonth.deposits)return `This month withdrawals are higher than deposits by ${fmt(thisMonth.withdrawals-thisMonth.deposits)}. Try setting a modest goal and a weekly quick-save amount to rebuild momentum.`;
+  if(topCat)return `${topCat[0]} is your strongest savings category at ${fmt(topCat[1])}. Keep using that label so your stats stay clean and useful.`;
+  return 'Start with a clear goal and a few small deposits. The tracker will automatically build monthly trends and smarter suggestions as your history grows.';
+}
 async function generateAiInsights(){
-  const txns=myTxns();
-  const block=document.getElementById('ai-insight-block');
-  const textEl=document.getElementById('ai-insight-text');
+  const txns=myTxns();const block=document.getElementById('ai-insight-block');const textEl=document.getElementById('ai-insight-text');
   if(!txns.length){block.style.display='none';return}
-
-  const total=myTotal();
-  const goal=curUser().goal||0;
-  const deposits=txns.filter(t=>t.type!=='withdrawal');
-  const withdrawals=txns.filter(t=>t.type==='withdrawal');
-  const catBreakdown={};
-  deposits.forEach(t=>{const c=t.category||'General';catBreakdown[c]=(catBreakdown[c]||0)+t.amount});
-
-  const cacheKey=JSON.stringify({total,goal,count:txns.length,cats:catBreakdown});
-  if(aiInsightCache.key===cacheKey&&aiInsightCache.text){
-    block.style.display='block';
-    textEl.innerHTML=aiInsightCache.text;
-    return;
-  }
-
-  block.style.display='block';
-  textEl.innerHTML='<div class="insight-loader"><span>Analysing</span><div class="insight-dots"><span>.</span><span>.</span><span>.</span></div></div>';
-
-  const prompt=`You are a friendly Malaysian personal finance assistant for TNG (Touch n Go) savings app. Analyse this user's savings data and give ONE concise, actionable insight in 2-3 sentences. Be specific, encouraging, and use RM for currency. Write in plain English (no markdown). Data: net savings RM${total.toFixed(2)}, ${deposits.length} deposits, ${withdrawals.length} withdrawals, goal: ${goal?'RM'+goal.toFixed(2):'not set'}, category breakdown: ${JSON.stringify(catBreakdown)}. Focus on the most useful observation: trend, goal progress, or a specific category pattern.`;
-
-  try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-6',
-        max_tokens:1000,
-        messages:[{role:'user',content:prompt}]
-      })
-    });
-    const data=await resp.json();
-    const text=(data.content||[]).map(b=>b.text||'').join('').trim();
-    if(text){
-      aiInsightCache={key:cacheKey,text:text};
-      textEl.textContent=text
-    }else{
-      textEl.textContent='Keep going — every deposit counts!'
-    }
-  }catch(e){
-    textEl.textContent='Set a savings goal to unlock personalised insights.'
-  }
+  const cacheKey=JSON.stringify({total:myTotal(),goal:curUser().goal||0,count:txns.length,last:txns[txns.length-1]?.id});
+  if(aiInsightCache.key===cacheKey&&aiInsightCache.text){block.style.display='block';textEl.textContent=aiInsightCache.text;return}
+  const text=buildSmartInsight();aiInsightCache={key:cacheKey,text};block.style.display='block';textEl.textContent=text;
 }
 
 // ── TRANSACTION TYPE TOGGLE ────────────────────────────────────────────────
@@ -704,54 +1175,56 @@ function renderStats(){
   const deposits=txns.filter(t=>t.type!=='withdrawal');
   const total=myTotal();
   const n=deposits.length;
-  const max=n?Math.max(...deposits.map(t=>t.amount)):0;
-  const avg=n?deposits.reduce((a,t)=>a+t.amount,0)/n:0;
-  document.getElementById('st-total').textContent=fmt(total);
-  document.getElementById('st-count').textContent=txns.length;
-  document.getElementById('st-max').textContent=fmt(max);
-  document.getElementById('st-avg').textContent=fmt(avg);
+  const max=n?Math.max(...deposits.map(t=>Number(t.amount||0))):0;
+  const avg=n?deposits.reduce((a,t)=>a+Number(t.amount||0),0)/n:0;
+  setText('st-total',fmt(total));setText('st-count',txns.length);setText('st-max',fmt(max));setText('st-avg',fmt(avg));
 
-  // Category chart
   const catEl=document.getElementById('cat-chart');
-  const catTotals={};
-  deposits.forEach(t=>{const c=t.category||'General';catTotals[c]=(catTotals[c]||0)+t.amount});
+  const catTotals={};deposits.forEach(t=>{const c=t.category||'General';catTotals[c]=(catTotals[c]||0)+Number(t.amount||0)});
   const catEntries=Object.entries(catTotals).sort((a,b)=>b[1]-a[1]);
   const maxCat=catEntries.length?catEntries[0][1]:1;
   if(!catEntries.length){catEl.innerHTML='<div style="font-size:12px;color:var(--text-muted)">No deposit data yet.</div>'}
-  else{
-    catEl.innerHTML=catEntries.map(([cat,amt])=>{
-      const pct=Math.round(amt/maxCat*100);
-      const col=CAT_COLORS[cat]||'#0066FF';
-      return`<div class="cat-row">
-        <div class="cat-label">${cat}</div>
-        <div class="cat-bar-wrap"><div class="cat-bar" style="width:${pct}%;background:${col}"></div></div>
-        <div class="cat-amt">${fmt(amt)}</div>
-      </div>`
-    }).join('')
-  }
+  else{catEl.innerHTML=catEntries.map(([cat,amt])=>{
+    const pct=Math.round(amt/maxCat*100);const col=CAT_COLORS[cat]||'#38BDF8';
+    return`<div class="cat-row"><div class="cat-label">${escHtml(cat)}</div><div class="cat-bar-wrap"><div class="cat-bar" style="width:${pct}%;background:${col}"></div></div><div class="cat-amt money">${fmt(amt)}</div></div>`
+  }).join('')}
 
-  // Joint pots
-  const jel=document.getElementById('st-joint');
-  const joints=myJoints();
+  renderFlowChart(txns);
+  renderMilestones(txns,deposits,total,catEntries);
+
+  const jel=document.getElementById('st-joint');const joints=myJoints();
   if(!joints.length){jel.innerHTML='<div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">No joint pots yet.</div>';return}
   jel.innerHTML=joints.map(j=>{
     const jt=(j.txns||[]).reduce((a,t)=>a+(t.type==='withdrawal'?-t.amount:t.amount),0);
     const mine=(j.txns||[]).filter(t=>t.byId===S.cur).reduce((a,t)=>a+(t.type==='withdrawal'?-t.amount:t.amount),0);
-    return`<div class="card" style="margin-bottom:8px">
-      <div class="card-row">
-        <div class="txn-ic dep"><i class="ti ti-users"></i></div>
-        <div class="card-info"><div class="card-title">${j.name}</div><div class="card-sub">my share: ${fmt(mine)}</div></div>
-        <div class="card-amt">${fmt(jt)}</div>
-      </div>
-    </div>`
+    return`<div class="card" style="margin-bottom:8px"><div class="card-row"><div class="txn-ic dep"><i class="ti ti-users"></i></div><div class="card-info"><div class="card-title">${escHtml(j.name)}</div><div class="card-sub">my share: ${fmt(mine)}</div></div><div class="card-amt money">${fmt(jt)}</div></div></div>`
   }).join('')
+}
+function renderFlowChart(txns){
+  const el=document.getElementById('flow-chart');if(!el)return;
+  const keys=lastMonthKeys(6);const data=keys.map(k=>({key:k,...calcMonth(txns,k)}));
+  const maxVal=Math.max(1,...data.map(d=>Math.max(d.deposits,d.withdrawals)));
+  if(!txns.length){el.innerHTML='<div style="font-size:12px;color:var(--text-muted)">No data yet.</div>';return}
+  el.innerHTML=data.map(d=>`<div class="flow-row"><div class="flow-label">${monthLabelFromKey(d.key).split(' ')[0]}</div><div class="flow-bars"><div class="flow-track"><div class="flow-fill dep" style="width:${Math.round(d.deposits/maxVal*100)}%"></div></div><div class="flow-track"><div class="flow-fill wit" style="width:${Math.round(d.withdrawals/maxVal*100)}%"></div></div></div><div class="flow-net money">${fmt(d.net)}</div></div>`).join('')
+}
+function renderMilestones(txns,deposits,total,catEntries){
+  const el=document.getElementById('st-milestones');if(!el)return;
+  const goal=curUser().goal||0;const pct=goal?Math.max(0,Math.min(100,Math.round(total/goal*100))):0;
+  const keys=lastMonthKeys(6);let best={key:null,net:-Infinity};keys.forEach(k=>{const m=calcMonth(txns,k);if(m.net>best.net)best={key:k,net:m.net}});
+  const topCat=catEntries[0];
+  const items=[
+    ['ti-target-arrow',goal?`${pct}% of goal`:'Goal not set',goal?`${fmt(Math.max(0,goal-total))} remaining`:'Add a goal to unlock pacing.'],
+    ['ti-calendar-stats',best.key?`Best month: ${monthLabelFromKey(best.key)}`:'No month yet',best.net>-Infinity?`${fmt(best.net)} net saved`:'Add transactions to see trends.'],
+    ['ti-category',topCat?`Top category: ${topCat[0]}`:'No category leader yet',topCat?`${fmt(topCat[1])} saved`:'Deposit categories will appear here.']
+  ];
+  el.innerHTML=items.map(([ic,title,sub])=>`<div class="milestone"><i class="ti ${ic}"></i><div><strong>${escHtml(title)}</strong><span>${escHtml(sub)}</span></div></div>`).join('')
 }
 
 // ── ADD TRANSACTION ───────────────────────────────────────────────────────
 function renderAddTarget(){
   const sel=document.getElementById('add-target');
   const joints=myJoints();
-  sel.innerHTML='<option value="me">my personal savings</option>'+joints.map(j=>`<option value="${j.id}">${j.name} (joint)</option>`).join('')
+  sel.innerHTML='<option value="me">my personal savings</option>'+joints.map(j=>`<option value="${j.id}">${escHtml(j.name)} (joint)</option>`).join('')
 }
 
 async function addDeposit(){
@@ -762,9 +1235,10 @@ async function addDeposit(){
   const category=isWit?'Withdrawal':(document.getElementById('add-cat').value||'General');
   const desc=rawDesc||(isWit?'Withdrawal':'Deposit');
   if(!amt||amt<=0){toast('Enter a valid amount');return}
-  const now=new Date();
-  const date=now.toLocaleDateString('en-MY',{day:'numeric',month:'short',year:'numeric'});
-  const txn={id:'t'+Date.now(),amount:amt,desc,date,category,type:isWit?'withdrawal':'deposit',byId:S.cur,by:curUser().name};
+  if(isWit&&target==='me'&&amt>myTotal()){toast('Amount exceeds personal balance');return}
+  const dateISO=document.getElementById('add-date')?.value||todayInputValue();
+  const date=formatDateLabel(dateISO);
+  const txn={id:'t'+Date.now(),amount:amt,desc,date,dateISO,category,type:isWit?'withdrawal':'deposit',byId:S.cur,by:curUser().name};
   if(target==='me'){
     if(!S.users[S.cur].txns)S.users[S.cur].txns=[];
     S.users[S.cur].txns.push({...txn});
@@ -774,12 +1248,10 @@ async function addDeposit(){
     S.joints[target].txns.push({...txn});
     await saveJoints();
   }
-  document.getElementById('add-amt').value='';
-  document.getElementById('add-desc').value='';
-  renderHeader();
+  document.getElementById('add-amt').value='';document.getElementById('add-desc').value='';setDefaultTxnDate();
+  renderHeader();if(activeTab==='mine')renderMine();
   toast((isWit?'Withdrew ':'Added ')+fmt(amt));
-  aiInsightCache={key:'',text:''};
-  if(activeTab==='mine')generateAiInsights()
+  aiInsightCache={key:'',text:''};if(activeTab==='mine')generateAiInsights()
 }
 
 // ── GOALS ─────────────────────────────────────────────────────────────────
@@ -926,9 +1398,9 @@ async function doJointDeposit(){
   const amt=parseFloat(document.getElementById('m-jamt').value);
   const desc=document.getElementById('m-jdesc').value.trim()||'Deposit';
   if(!amt||amt<=0){toast('Enter a valid amount');return}
-  const now=new Date();const date=now.toLocaleDateString('en-MY',{day:'numeric',month:'short',year:'numeric'});
+  const dateISO=todayInputValue();const date=formatDateLabel(dateISO);
   if(!S.joints[curJoint].txns)S.joints[curJoint].txns=[];
-  S.joints[curJoint].txns.push({id:'t'+Date.now(),amount:amt,desc,date,type:'deposit',byId:S.cur,by:curUser().name});
+  S.joints[curJoint].txns.push({id:'t'+Date.now(),amount:amt,desc,date,dateISO,type:'deposit',byId:S.cur,by:curUser().name});
   await saveJoints();closeModal();renderJointDetail();renderHeader();toast('Added '+fmt(amt))
 }
 
@@ -951,9 +1423,9 @@ async function doJointWithdraw(){
   const desc=document.getElementById('m-jwdesc').value.trim()||'Withdrawal';
   if(!amt||amt<=0){toast('Enter a valid amount');return}
   if(amt>net){toast('Amount exceeds pot balance');return}
-  const now=new Date();const date=now.toLocaleDateString('en-MY',{day:'numeric',month:'short',year:'numeric'});
+  const dateISO=todayInputValue();const date=formatDateLabel(dateISO);
   if(!j.txns)j.txns=[];
-  j.txns.push({id:'t'+Date.now(),amount:amt,desc,date,type:'withdrawal',byId:S.cur,by:curUser().name});
+  j.txns.push({id:'t'+Date.now(),amount:amt,desc,date,dateISO,type:'withdrawal',byId:S.cur,by:curUser().name});
   await saveJoints();closeModal();renderJointDetail();renderHeader();toast('Withdrew '+fmt(amt))
 }
 
@@ -985,6 +1457,82 @@ async function clearMyData(){
   S.users[S.cur].txns=[];S.users[S.cur].goal=0;await saveUsers();
   aiInsightCache={key:'',text:''};
   renderHeader();renderMine();renderStats();toast('Data cleared')
+}
+
+
+// ── SETTINGS / BACKUP TOOLS ───────────────────────────────────────────────
+function renderSettings(){
+  const el=document.getElementById('settings-profile');if(!el)return;
+  const u=curUser();const total=myTotal();const txns=myTxns();const goal=u.goal||0;
+  el.innerHTML=`<div class="profile-panel">
+    <div class="profile-top"><div class="avatar" style="${avatarStyle(u.name,46)}">${initials(u.name)}</div><div><div class="profile-name">${escHtml(u.name)}</div><div class="profile-meta">${txns.length} personal transactions · ${myJoints().length} joint pots</div></div></div>
+    <div class="profile-stats"><div class="profile-stat"><span>Balance</span><b class="money">${fmt(total)}</b></div><div class="profile-stat"><span>Goal</span><b class="money">${goal?fmt(goal):'None'}</b></div><div class="profile-stat"><span>Progress</span><b>${goal?Math.max(0,Math.min(100,Math.round(total/goal*100)))+'%':'—'}</b></div></div>
+  </div>`;
+}
+function openEditProfile(){
+  const u=curUser();
+  openModal('edit profile',`
+    <input class="inp" id="m-profile-name" maxlength="20" placeholder="Your name" value="${escAttr(u.name)}">
+    <div class="sheet-btns"><button class="btn-sec" style="flex:1" onclick="closeModal()">cancel</button><button class="btn-pri" style="flex:1;margin-bottom:0" onclick="saveProfile()">save</button></div>`)
+}
+async function saveProfile(){
+  const name=document.getElementById('m-profile-name').value.trim();
+  if(!name){toast('Enter your name');return}
+  if(Object.values(S.users).some(u=>u.id!==S.cur&&u.name.toLowerCase()===name.toLowerCase())){toast('Name already taken');return}
+  S.users[S.cur].name=name;await saveUsers();closeModal();renderHeader();renderSettings();toast('Profile updated')
+}
+function openChangePin(){
+  openModal('change PIN',`
+    <div class="pin-wrap"><input class="inp" id="m-old-pin" type="password" placeholder="Current PIN" maxlength="4" inputmode="numeric"><button class="pin-toggle" type="button" onclick="togglePinVis('m-old-pin',this)" tabindex="-1"><i class="ti ti-eye"></i></button></div>
+    <div class="pin-wrap"><input class="inp" id="m-new-pin" type="password" placeholder="New 4-digit PIN" maxlength="4" inputmode="numeric"><button class="pin-toggle" type="button" onclick="togglePinVis('m-new-pin',this)" tabindex="-1"><i class="ti ti-eye"></i></button></div>
+    <div class="sheet-btns"><button class="btn-sec" style="flex:1" onclick="closeModal()">cancel</button><button class="btn-pri" style="flex:1;margin-bottom:0" onclick="savePin()">update</button></div>`)
+}
+async function savePin(){
+  const oldPin=document.getElementById('m-old-pin').value.trim();const newPin=document.getElementById('m-new-pin').value.trim();
+  if(curUser().pin!==oldPin){toast('Current PIN is incorrect');return}
+  if(!/^\d{4}$/.test(newPin)){toast('PIN must be 4 digits');return}
+  S.users[S.cur].pin=newPin;await saveUsers();closeModal();toast('PIN updated')
+}
+function getBackupPayload(){
+  const u=curUser();
+  const joints=myJoints().map(j=>({id:j.id,name:j.name,goal:j.goal||0,members:j.members||[],txns:j.txns||[]}));
+  return {app:'Broski Tabung',version:2,exportedAt:new Date().toISOString(),user:{id:u.id,name:u.name,goal:u.goal||0,txns:u.txns||[]},joints};
+}
+function exportBackup(){
+  const payload=getBackupPayload();
+  const safeName=(curUser().name||'user').replace(/[^a-z0-9_-]+/gi,'_');
+  downloadText(`broski-tabung-${safeName}-${todayInputValue()}.json`,JSON.stringify(payload,null,2));
+  toast('Backup exported')
+}
+function handleBackupImport(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=async ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      const imported=data.user||data;
+      if(!Array.isArray(imported.txns)){toast('Invalid backup file');return}
+      if(!confirm('Import backup and replace your personal transactions and goal?'))return;
+      S.users[S.cur].txns=imported.txns.map(t=>({...t,amount:Number(t.amount||0)}));
+      S.users[S.cur].goal=Number(imported.goal||0);
+      if(imported.name&&!Object.values(S.users).some(u=>u.id!==S.cur&&u.name.toLowerCase()===String(imported.name).toLowerCase()))S.users[S.cur].name=String(imported.name).slice(0,20);
+      await saveUsers();aiInsightCache={key:'',text:''};renderHeader();populateTab(activeTab);toast('Backup imported')
+    }catch(err){toast('Could not read backup')}
+    e.target.value='';
+  };
+  reader.readAsText(file);
+}
+function buildSummaryText(){
+  const u=curUser();const total=myTotal();const goal=u.goal||0;const month=calcMonth(myTxns(),monthKeyFromDate(new Date()));
+  const goalLine=goal?`Goal: ${fmt(goal)} (${Math.max(0,Math.min(100,Math.round(total/goal*100)))}% complete)`:'Goal: not set';
+  return `Broski Tabung summary for ${u.name}\nBalance: ${fmt(total)}\nThis month: ${fmt(month.net)} net (${fmt(month.deposits)} in, ${fmt(month.withdrawals)} out)\n${goalLine}\nTransactions: ${myTxns().length}`;
+}
+async function copySummary(){
+  const text=buildSummaryText();
+  try{await navigator.clipboard.writeText(text);toast('Summary copied')}
+  catch(e){
+    const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('Summary copied')
+  }
 }
 
 // ── QR / RECEIPT WITH OCR FALLBACK ─────────────────────────────────────────
@@ -1034,11 +1582,12 @@ function applyQR(text){
 function exportToCSV(){
   const txns=myTxns();
   if(!txns.length){toast('No transactions to export.');return}
-  let csv='ID,Date,Description,Category,Type,Amount(RM)\n';
-  txns.forEach(t=>{csv+=`"${t.id}","${t.date}","${(t.desc||'').replace(/"/g,'""')}","${t.category||'General'}","${t.type||'deposit'}",${t.amount}\n`});
+  let csv='ID,Date,DateISO,Description,Category,Type,Amount(RM)\n';
+  txns.forEach(t=>{csv+=`"${t.id}","${t.date||''}","${t.dateISO||''}","${(t.desc||'').replace(/"/g,'""')}","${t.category||'General'}","${t.type||'deposit'}",${t.amount}\n`});
   const link=document.createElement('a');
   link.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
-  link.download=`TNG_${curUser().name}_${new Date().toISOString().slice(0,10)}.csv`;
+  const safeName=(curUser().name||'user').replace(/[^a-z0-9_-]+/gi,'_');
+  link.download=`TNG_${safeName}_${new Date().toISOString().slice(0,10)}.csv`;
   document.body.appendChild(link);link.click();document.body.removeChild(link);
   toast('CSV exported')
 }
@@ -1047,7 +1596,7 @@ function exportToCSV(){
 function openModal(title,bodyHTML){
   document.getElementById('modal-title').textContent=title;
   document.getElementById('modal-body').innerHTML=bodyHTML;
-  document.getElementById('modal-layer').style.display='block'
+  document.getElementById('modal-layer').style.display='block';setTimeout(()=>document.querySelector('#modal-body .inp')?.focus(),50)
 }
 function closeModal(e){if(!e||e.target===document.getElementById('modal-bg'))document.getElementById('modal-layer').style.display='none'}
 
@@ -1056,7 +1605,7 @@ function toast(msg){
   setTimeout(()=>t.classList.remove('show'),2400)
 }
 
-(()=>{startDatabaseListeners();showLogin()})();
+(()=>{applyPreferences();initConnectivity();startDatabaseListeners();showLogin();setDefaultTxnDate()})();
 </script>
 </body>
 </html>
